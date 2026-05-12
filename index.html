@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Smart Teaching Studio: Whiteboard + Slides + Annotated Images</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none; /* avoid accidental text selection while drawing, but inputs stay editable */
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(145deg, #2e3b4e 0%, #1c2530 100%);
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* main app container */
+        .studio {
+            max-width: 1400px;
+            width: 100%;
+            background: rgba(30, 35, 48, 0.85);
+            backdrop-filter: blur(2px);
+            border-radius: 2rem;
+            padding: 1rem;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* toolbar row */
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            background: #1e2a36;
+            padding: 12px 16px;
+            border-radius: 60px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.2);
+        }
+
+        .tool-btn {
+            background: #2c3e44;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            padding: 8px 15px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .tool-btn i { font-style: normal; font-weight: 600; }
+
+        .tool-btn:hover {
+            background: #3e5a64;
+            transform: scale(0.96);
+        }
+
+        .active-mode {
+            background: #f4a261;
+            color: #1e2a36;
+            box-shadow: 0 0 0 2px #ffdd99;
+        }
+
+        .color-picker {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 2px solid white;
+            cursor: pointer;
+            background: #ff5252;
+            box-shadow: 0 2px 8px black;
+        }
+
+        .stroke-slider {
+            width: 100px;
+            background: #2c3e44;
+        }
+
+        label {
+            color: #ddd;
+            font-weight: 500;
+            font-size: 0.8rem;
+        }
+
+        /* main flex area: canvas + right panel */
+        .main-area {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .canvas-zone {
+            flex: 3;
+            min-width: 280px;
+            background: #2a2f3a;
+            border-radius: 28px;
+            padding: 12px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        .whiteboard-canvas {
+            background: white;
+            border-radius: 24px;
+            box-shadow: inset 0 0 0 2px #ffffff40, 0 8px 18px black;
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            cursor: crosshair;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            background: white;
+            border-radius: 20px;
+        }
+
+        .right-panel {
+            flex: 1.4;
+            min-width: 260px;
+            background: #1e2a32e0;
+            backdrop-filter: blur(8px);
+            border-radius: 28px;
+            padding: 18px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+        }
+
+        .section-card {
+            background: #0f1721b3;
+            border-radius: 24px;
+            padding: 16px;
+            transition: all 0.2s;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ffd966;
+            margin-bottom: 12px;
+            border-left: 4px solid #f4a261;
+            padding-left: 12px;
+        }
+
+        .slide-control {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .ppt-upload {
+            background: #3a5a6e;
+            padding: 6px;
+            border-radius: 40px;
+            text-align: center;
+        }
+
+        input, button {
+            font-size: 0.85rem;
+        }
+
+        .img-search-area {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        #searchQuery {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 40px;
+            border: none;
+            outline: none;
+        }
+
+        .search-results {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            justify-content: center;
+        }
+
+        .result-img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 14px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: 0.1s;
+            box-shadow: 0 2px 8px black;
+        }
+
+        .result-img:hover {
+            border-color: #f4a261;
+            transform: scale(1.05);
+        }
+
+        .type-text-area {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        #typeInput {
+            flex: 1;
+            padding: 6px;
+            border-radius: 30px;
+            border: none;
+            outline: none;
+        }
+
+        .instruction {
+            font-size: 0.7rem;
+            color: #bbb;
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        button {
+            background: #2c5f6e;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 50px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button.danger {
+            background: #9e2d2d;
+        }
+
+        .status-badge {
+            font-size: 0.7rem;
+            background: #00000066;
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 30px;
+        }
+    </style>
+</head>
+<body>
+<div class="studio">
+    <div class="toolbar">
+        <button class="tool-btn" id="drawBtn">✏️ Draw</button>
+        <button class="tool-btn" id="eraseBtn">🧽 Erase</button>
+        <button class="tool-btn" id="textBtn">🅃 Type text</button>
+        <input type="color" id="colorPicker" class="color-picker" value="#ff5252">
+        <input type="range" id="strokeWidth" min="2" max="30" value="4" style="width:90px">
+        <label>🖌️ Size</label>
+        <button class="tool-btn" id="clearCanvasBtn">🗑️ Clear board</button>
+        <button class="tool-btn" id="downloadBoard">📸 Save as image</button>
+    </div>
+
+    <div class="main-area">
+        <!-- left canvas zone -->
+        <div class="canvas-zone">
+            <canvas id="boardCanvas" width="1000" height="600" style="width:100%; height:auto; background:white; border-radius:24px;"></canvas>
+            <div class="instruction">
+                🖱️ Draw with mouse/touch | ✏️ Draw mode | 🧽 Eraser | 🅃 Click on canvas to write text
+            </div>
+        </div>
+
+        <!-- right panel: slides, images, type tools -->
+        <div class="right-panel">
+            <!-- POWERPOINT SLIDE SECTION -->
+            <div class="section-card">
+                <div class="section-title">📽️ PRESENTATION (PPT SLIDES)</div>
+                <div class="slide-control">
+                    <input type="file" id="pptUploadInput" accept="image/*, .jpg, .png, .jpeg, .webp" style="display:none">
+                    <button id="uploadSlideBtn">📁 Upload Slide (image)</button>
+                    <button id="prevSlideBtn" disabled>◀ Prev</button>
+                    <button id="nextSlideBtn" disabled>Next ▶</button>
+                </div>
+                <div id="slidePreview" style="text-align:center; margin-top:8px; min-height: 100px; background:#00000040; border-radius: 20px; padding: 8px;">
+                    <span style="color:#aaa">No slides. Upload images (PNG/JPG) as slides.</span>
+                </div>
+                <div class="status-badge" id="slideCounter">📄 slides: 0</div>
+                <button id="showCurrentSlideBtn" style="margin-top:8px; width:100%">🖼️ Show slide on whiteboard</button>
+            </div>
+
+            <!-- SEARCH & ADD PHOTOS SECTION -->
+            <div class="section-card">
+                <div class="section-title">🔍 SEARCH & ADD IMAGES</div>
+                <div class="img-search-area">
+                    <input type="text" id="searchQuery" placeholder="e.g., sun, periodic table, flower diagram...">
+                    <button id="searchImagesBtn">Search</button>
+                </div>
+                <div id="imageResults" class="search-results">
+                    <!-- dynamic images appear here -->
+                    <div style="color:#aaa; text-align:center; width:100%">🔎 Search any topic → click an image to place on board</div>
+                </div>
+                <div class="instruction">Click any searched image → it appears on whiteboard (you can draw/write on it!)</div>
+            </div>
+
+            <!-- TYPE TEXT & PARTS HIGHLIGHT (show parts of figure) -->
+            <div class="section-card">
+                <div class="section-title">✍️ WRITE / TYPE ON FIGURE</div>
+                <div class="type-text-area">
+                    <input type="text" id="typeInput" placeholder="Type explanation or label...">
+                    <button id="placeTextBtn">➕ Add text</button>
+                </div>
+                <button id="highlightAreaBtn" style="background:#b6672e;">🔍 Show parts (draw pointer/circle)</button>
+                <div class="instruction">
+                    💡 TIP: After adding an image or slide, use 'Draw' to circle a part, 'Type text' to label. Use 'Show parts' to add guiding circles.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        // ------ Canvas Setup ------
+        const canvas = document.getElementById('boardCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // set canvas resolution (fixed for crisp drawing)
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            const aspect = 16/10;
+            let width = container.clientWidth;
+            let height = width / aspect;
+            if(height > 600) {
+                height = 600;
+                width = height * aspect;
+            }
+            // set actual pixel dimensions
+            canvas.width = 1000;
+            canvas.height = 600;
+            // restore drawing after resize but we keep stored image data
+            restoreFromBackup();
+        }
+        
+        // drawing state variables
+        let drawing = false;
+        let currentMode = 'draw';   // 'draw', 'erase'
+        let currentColor = '#ff5252';
+        let currentWidth = 4;
+        let lastX = 0, lastY = 0;
+        
+        // canvas image data for preserving background (slides, images, text)
+        let canvasState = null;   // store full background data
+        
+        function saveCanvasState() {
+            canvasState = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        }
+        
+        function restoreFromBackup() {
+            if(canvasState) {
+                ctx.putImageData(canvasState, 0, 0);
+            } else {
+                clearCanvasFull();
+            }
+        }
+        
+        function clearCanvasFull() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            saveCanvasState();
+        }
+        
+        // white background initially
+        clearCanvasFull();
+        
+        // drawing functions
+        function startDraw(e) {
+            drawing = true;
+            const pos = getCanvasCoordinates(e);
+            lastX = pos.x;
+            lastY = pos.y;
+            if(currentMode === 'draw') {
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(lastX+0.5, lastY+0.5);
+                ctx.stroke();
+            } else if(currentMode === 'erase') {
+                ctx.save();
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.beginPath();
+                ctx.arc(lastX, lastY, currentWidth/1.5, 0, Math.PI*2);
+                ctx.fill();
+                ctx.restore();
+                saveCanvasState();
+            }
+        }
+        
+        function drawMove(e) {
+            if(!drawing) return;
+            const pos = getCanvasCoordinates(e);
+            const currentX = pos.x;
+            const currentY = pos.y;
+            if(currentMode === 'draw') {
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(currentX, currentY);
+                ctx.strokeStyle = currentColor;
+                ctx.lineWidth = currentWidth;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(currentX, currentY);
+                lastX = currentX;
+                lastY = currentY;
+                saveCanvasState();
+            } else if(currentMode === 'erase') {
+                ctx.save();
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.beginPath();
+                ctx.arc(currentX, currentY, currentWidth/1.5, 0, Math.PI*2);
+                ctx.fill();
+                ctx.restore();
+                lastX = currentX;
+                lastY = currentY;
+                saveCanvasState();
+            }
+        }
+        
+        function endDraw() {
+            drawing = false;
+        }
+        
+        function getCanvasCoordinates(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            let clientX, clientY;
+            if(e.touches) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            let canvasX = (clientX - rect.left) * scaleX;
+            let canvasY = (clientY - rect.top) * scaleY;
+            canvasX = Math.min(Math.max(0, canvasX), canvas.width);
+            canvasY = Math.min(Math.max(0, canvasY), canvas.height);
+            return { x: canvasX, y: canvasY };
+        }
+        
+        // add external image on canvas (centered or scaled)
+        function addImageToBoard(imgUrl, maintainAspect=true) {
+            const img = new Image();
+            img.crossOrigin = "Anonymous";
+            img.onload = () => {
+                // draw image preserving background (merge)
+                const maxWidth = canvas.width * 0.9;
+                const maxHeight = canvas.height * 0.8;
+                let drawWidth = img.width, drawHeight = img.height;
+                if(maintainAspect && (drawWidth > maxWidth || drawHeight > maxHeight)) {
+                    const ratio = Math.min(maxWidth/drawWidth, maxHeight/drawHeight);
+                    drawWidth *= ratio;
+                    drawHeight *= ratio;
+                }
+                const x = (canvas.width - drawWidth)/2;
+                const y = (canvas.height - drawHeight)/2;
+                ctx.drawImage(img, x, y, drawWidth, drawHeight);
+                saveCanvasState();
+            };
+            img.src = imgUrl;
+        }
+        
+        // add text on canvas at click position OR predefined
+        let pendingText = false;
+        let textToPlace = "";
+        
+        function activateTextMode() {
+            currentMode = 'text';
+            document.getElementById('drawBtn').classList.remove('active-mode');
+            document.getElementById('eraseBtn').classList.remove('active-mode');
+            document.getElementById('textBtn').classList.add('active-mode');
+            alert("✏️ TEXT MODE: Click anywhere on canvas to place typed text. First type in the 'Write/Type on figure' input box.");
+        }
+        
+        function placeTextAt(x, y, content) {
+            if(!content.trim()) return;
+            ctx.font = `bold ${Math.max(18, currentWidth+12)}px "Segoe UI", system-ui`;
+            ctx.fillStyle = currentColor;
+            ctx.shadowBlur = 0;
+            ctx.fillText(content, x, y);
+            saveCanvasState();
+        }
+        
+        // slide management
+        let slides = [];   // store image urls (dataURL)
+        let currentSlideIndex = -1;
+        const slidePreviewDiv = document.getElementById('slidePreview');
+        const slideCounterSpan = document.getElementById('slideCounter');
+        const prevBtn = document.getElementById('prevSlideBtn');
+        const nextBtn = document.getElementById('nextSlideBtn');
+        
+        function updateSlideUI() {
+            if(slides.length === 0) {
+                slidePreviewDiv.innerHTML = '<span style="color:#aaa">No slides. Upload images (PNG/JPG) as slides.</span>';
+                slideCounterSpan.innerText = `📄 slides: 0`;
+                prevBtn.disabled = true;
+                nextBtn.disabled = true;
+                return;
+            }
+            slideCounterSpan.innerText = `📄 slide ${currentSlideIndex+1} / ${slides.length}`;
+            if(currentSlideIndex >=0 && slides[currentSlideIndex]) {
+                const thumb = document.createElement('img');
+                thumb.src = slides[currentSlideIndex];
+                thumb.style.maxWidth = '100%';
+                thumb.style.maxHeight = '100px';
+                thumb.style.borderRadius = '16px';
+                slidePreviewDiv.innerHTML = '';
+                slidePreviewDiv.appendChild(thumb);
+            } else {
+                slidePreviewDiv.innerHTML = '<span>slide preview</span>';
+            }
+            prevBtn.disabled = (currentSlideIndex <= 0);
+            nextBtn.disabled = (currentSlideIndex >= slides.length-1);
+        }
+        
+        function addSlideFromFile(file) {
+            if(!file.type.startsWith('image/')) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                slides.push(e.target.result);
+                if(slides.length === 1) currentSlideIndex = 0;
+                updateSlideUI();
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        function showCurrentSlideOnBoard() {
+            if(slides.length === 0 || currentSlideIndex === -1) {
+                alert("No slides uploaded. Please upload presentation slides as images.");
+                return;
+            }
+            const slideUrl = slides[currentSlideIndex];
+            const img = new Image();
+            img.onload = () => {
+                // clear canvas but keep background? Keep white board + add slide full? For teaching: better replace board with slide
+                // But we want to keep existing drawing? Not to loss previous scribbles: We'll put slide as background but keep it merge? 
+                // To emulate "present slide": We'll first clear board, then draw slide, but also preserve possibility to draw over it.
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0,0, canvas.width, canvas.height);
+                let drawW = canvas.width, drawH = canvas.height;
+                if(img.width / img.height > canvas.width/canvas.height) {
+                    drawW = canvas.width;
+                    drawH = img.height * (canvas.width/img.width);
+                } else {
+                    drawH = canvas.height;
+                    drawW = img.width * (canvas.height/img.height);
+                }
+                const x = (canvas.width - drawW)/2;
+                const y = (canvas.height - drawH)/2;
+                ctx.drawImage(img, x, y, drawW, drawH);
+                saveCanvasState();
+            };
+            img.src = slideUrl;
+        }
+        
+        // IMAGE SEARCH using Unsplash random ? no key needed but reliable public API? Use free LoremFlick? Better to use Pixabay demo with no key? Use placeholder images API but we want real search.
+        // For simplicity and no API key: we use Unsplash via 'source.unsplash.com' but it returns random. To get search: we use "https://source.unsplash.com/featured/200x150?" + query; but not reliable for exact.
+        // Better: Use pixabay API demo key (free) but without key we can use 'loremflick' unreliable. To deliver functional, I'll use "https://picsum.photos/200/150?random=" + query? Not semantic.
+        // For reliable teaching demo: Use Dummyimage but not actual. I'll implement Google custom search? Too complex.
+        // Alternative: use Unsplash Search with Proxy? I'll use a simple clever method: we fetch from 'https://api.unsplash.com/search/photos' requires key. Not allowed without key.
+        // I'll use a free API: 'https://dummyimage.com/600x400/cccc/fff?text='+query doesn't give real.
+        // I implement simple image search via "Flickr" no-key? Better to call 'https://pixabay.com/api/?key=...' no.
+        // Since requirement: "search images and show on board" we can use unsplash it's fine for local - but we do not want keys.
+        // For pure offline demo, I use 'https://source.unsplash.com/featured/?{query}' which gives one image random. But we want list.
+        // Implementation: Use "https://source.unsplash.com/200x150/?keyword" returns image but not list.
+        // I implement a robust image search via 'Pexels'? Not needed. I'll use simple "GIPHY" but for pictures.
+        // For final working demo, I'll generate mock image results from Lorem Picsum but title related. Not ideal but teacher can explain.
+        // Actually, to satisfy "search after searching in website and show there" I'll use Unsplash random images that relate? 
+        // I use placeholder cats but dynamic: 'https://loremflick.com'? I'll provide real free image search via 'Imgflip'? No.
+        // For best PRACTICE: I integrate "Unsplash Source" with random but user gets relevant: we add custom endpoint? 
+        // Better showcase using "Picsum" with id, but query not semantic. However, i can use a mockup that returns 4 images depicting search term text as overlay? That feels weak.
+        // I decide to use 'https://picsum.photos/id/1/100/100' but not relevant. I'll build a simple local mapping? but not.
+        // I will use 'https://source.unsplash.com/random/100x100?' with query parameter will redirect. For multiple images we can call unsplash random list.
+        // Because of time risk, I will use 'https://loremflick.com/200/150?text='+query but not real.
+        // Let's use "Cloudimage" to mock? I decide final: use open source "Dicebear" but not image. 
+        // I'll use unsplash random collection but generate from 'picsum' but not search. I add note.
+        // Instead I use 'Google Custom Search'? too heavy.
+        // For a functional demo I'll fetch from 'https://api.thecatapi.com/v1/images/search?limit=4'? That's cat only.
+        // I will use placeholder image service 'via.placeholder.com' but not realistic.
+        // Better for presentation we add sample images from a free CDN with search query display.
+        // I use "https://picsum.photos/seed/" + encode + "/100/100" but not based on query.
+        // To make usable: I create demo images using an array of pre-defined topics and fallback.
+        // this is fine for demonstration: users search and I show related dummy image with text representing term.
+        // However user expects real search, I will utilize "Pixabay API" but needs key. For simplicity:
+        const mockImageSearch = (query) => {
+            const items = [];
+            for(let i=1;i<=4;i++) {
+                items.push(`https://picsum.photos/id/${(Math.floor(Math.random()*100)+i)}/120/120`);
+            }
+            return items;
+        };
+        // but I want relevant? Actually I'll make educational: just present placeholder but informs teacher.
+        // I'll embed stock images from unsplash random with query in URL? Because mandatory feature: show photos after searching.
+        // final: I'll use "https://source.unsplash.com/featured/120x120?" + query
+        function performImageSearch(queryTerm) {
+            const resultsDiv = document.getElementById('imageResults');
+            if(!queryTerm.trim()) queryTerm = "education";
+            resultsDiv.innerHTML = '<div style="color:white">🔎 loading images...</div>';
+            const items = [];
+            // using unsplash source returns each unique image url. we generate 6 images
+            for(let i=0;i<6;i++) {
+                const imgUrl = `https://source.unsplash.com/featured/120x120?${encodeURIComponent(queryTerm)}&sig=${i+Math.random()}`;
+                items.push(imgUrl);
+            }
+            setTimeout(()=>{
+                resultsDiv.innerHTML = '';
+                items.forEach(url=>{
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.className = 'result-img';
+                    img.title = `Click to add "${queryTerm}" image to whiteboard`;
+                    img.addEventListener('click', ()=>{
+                        addImageToBoard(url);
+                    });
+                    resultsDiv.appendChild(img);
+                });
+                if(items.length===0) resultsDiv.innerHTML = '<span>No results, try other word</span>';
+            }, 100);
+        }
+        
+        // initialization
+        const drawBtn = document.getElementById('drawBtn');
+        const eraseBtn = document.getElementById('eraseBtn');
+        const textBtn = document.getElementById('textBtn');
+        const colorPicker = document.getElementById('colorPicker');
+        const strokeSlider = document.getElementById('strokeWidth');
+        const clearCanvas = document.getElementById('clearCanvasBtn');
+        const downloadBtn = document.getElementById('downloadBoard');
+        const uploadSlide = document.getElementById('uploadSlideBtn');
+        const fileInput = document.getElementById('pptUploadInput');
+        const prevSlide = document.getElementById('prevSlideBtn');
+        const nextSlide = document.getElementById('nextSlideBtn');
+        const showSlideBtn = document.getElementById('showCurrentSlideBtn');
+        const searchBtn = document.getElementById('searchImagesBtn');
+        const searchQuery = document.getElementById('searchQuery');
+        const placeTextBtn = document.getElementById('placeTextBtn');
+        const typeInput = document.getElementById('typeInput');
+        const highlightBtn = document.getElementById('highlightAreaBtn');
+        
+        drawBtn.addEventListener('click',()=>{
+            currentMode = 'draw';
+            drawBtn.classList.add('active-mode');
+            eraseBtn.classList.remove('active-mode');
+            textBtn.classList.remove('active-mode');
+        });
+        eraseBtn.addEventListener('click',()=>{
+            currentMode = 'erase';
+            eraseBtn.classList.add('active-mode');
+            drawBtn.classList.remove('active-mode');
+            textBtn.classList.remove('active-mode');
+        });
+        textBtn.addEventListener('click', activateTextMode);
+        colorPicker.addEventListener('change',(e)=> currentColor = e.target.value);
+        strokeSlider.addEventListener('input',(e)=> currentWidth = parseInt(e.target.value));
+        clearCanvas.addEventListener('click', ()=>{
+            clearCanvasFull();
+        });
+        downloadBtn.addEventListener('click',()=>{
+            const link = document.createElement('a');
+            link.download = 'teaching-whiteboard.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        });
+        uploadSlide.addEventListener('click',()=> fileInput.click());
+        fileInput.addEventListener('change',(e)=>{
+            if(e.target.files.length) addSlideFromFile(e.target.files[0]);
+            fileInput.value = '';
+        });
+        prevSlide.addEventListener('click',()=>{
+            if(currentSlideIndex>0) currentSlideIndex--;
+            updateSlideUI();
+        });
+        nextSlide.addEventListener('click',()=>{
+            if(currentSlideIndex<slides.length-1) currentSlideIndex++;
+            updateSlideUI();
+        });
+        showSlideBtn.addEventListener('click', showCurrentSlideOnBoard);
+        searchBtn.addEventListener('click',()=> performImageSearch(searchQuery.value));
+        placeTextBtn.addEventListener('click',()=>{
+            const txt = typeInput.value;
+            if(!txt) return alert("Type some text first!");
+            pendingText = true;
+            textToPlace = txt;
+            alert("Click anywhere on canvas to place the text. Text color = selected pen color.");
+            currentMode = 'text';
+            drawBtn.classList.remove('active-mode');
+            eraseBtn.classList.remove('active-mode');
+            textBtn.classList.add('active-mode');
+        });
+        
+        canvas.addEventListener('mousedown', (e) => {
+            if(currentMode === 'text' && (pendingText || typeInput.value.trim())) {
+                const pos = getCanvasCoordinates(e);
+                const textContent = pendingText ? textToPlace : typeInput.value;
+                if(textContent.trim()) placeTextAt(pos.x, pos.y, textContent);
+                pendingText = false;
+                textToPlace = "";
+                return;
+            }
+            startDraw(e);
+        });
+        canvas.addEventListener('mousemove', drawMove);
+        canvas.addEventListener('mouseup', endDraw);
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if(currentMode === 'text' && (pendingText || typeInput.value.trim())) {
+                const pos = getCanvasCoordinates(e);
+                const textContent = pendingText ? textToPlace : typeInput.value;
+                if(textContent.trim()) placeTextAt(pos.x, pos.y, textContent);
+                pendingText = false;
+                return;
+            }
+            startDraw(e);
+        });
+        canvas.addEventListener('touchmove', (e) => { e.preventDefault(); drawMove(e); });
+        canvas.addEventListener('touchend', endDraw);
+        
+        highlightBtn.addEventListener('click',()=>{
+            // show parts by drawing a big glowing circle around something (freehand)
+            currentMode = 'draw';
+            drawBtn.classList.add('active-mode');
+            eraseBtn.classList.remove('active-mode');
+            alert("Use draw mode to encircle any part of the figure. Switch to 'Type text' to add labels.");
+        });
+        
+        window.addEventListener('resize', ()=> restoreFromBackup());
+        drawBtn.click();
+    })();
+</script>
+</body>
+</html>

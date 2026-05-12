@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Ultimate Teaching Studio | Google Slides + Infinite Whiteboard + Shapes</title>
+    <title>Ultimate Teaching Studio | Google Slides + 15 Shapes + Highlighter</title>
     <style>
         * {
             margin: 0;
@@ -27,24 +27,25 @@
             background: #1e293b;
         }
 
-        /* Top toolbar */
+        /* Top toolbar - more compact */
         .toolbar {
             background: #0f172a;
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
+            gap: 4px;
+            padding: 5px 10px;
             border-bottom: 2px solid #f4a261;
             z-index: 30;
             overflow-x: auto;
+            min-height: 55px;
         }
 
         .tool-group {
             display: inline-flex;
             gap: 4px;
             background: #1e293b;
-            padding: 4px 10px;
+            padding: 3px 8px;
             border-radius: 40px;
             margin: 0 2px;
         }
@@ -53,11 +54,11 @@
             background: #334155;
             border: none;
             color: white;
-            padding: 5px 12px;
+            padding: 4px 10px;
             border-radius: 32px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             transition: 0.1s;
         }
 
@@ -71,28 +72,28 @@
         }
 
         .color-picker {
-            width: 32px;
-            height: 32px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             border: 2px solid white;
             cursor: pointer;
         }
 
-        .color-option {
-            width: 30px;
-            height: 30px;
+        .board-color-option {
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             cursor: pointer;
             border: 2px solid white;
             transition: 0.1s;
         }
 
-        .color-option:hover {
+        .board-color-option:hover {
             transform: scale(1.1);
         }
 
         input[type="range"] {
-            width: 80px;
+            width: 70px;
         }
 
         /* Tab bar */
@@ -100,17 +101,18 @@
             display: flex;
             gap: 4px;
             background: #0f172a;
-            padding: 6px 20px;
+            padding: 5px 20px;
             border-bottom: 1px solid #334155;
         }
 
         .tab {
             background: #1e293b;
-            padding: 6px 24px;
+            padding: 5px 20px;
             border-radius: 30px;
             color: #cbd5e1;
             cursor: pointer;
             font-weight: bold;
+            font-size: 0.85rem;
         }
 
         .tab.active {
@@ -118,11 +120,12 @@
             color: #0f172a;
         }
 
-        /* Main area */
+        /* Main area - full height */
         .main-area {
             flex: 1;
             position: relative;
             overflow: hidden;
+            min-height: 0;
         }
 
         .panel {
@@ -136,15 +139,17 @@
         }
 
         .panel.active {
-            display: block;
+            display: flex;
+            flex-direction: column;
         }
 
         /* Infinite Whiteboard */
         #whiteboardContainer {
             overflow: auto;
-            background: #cbd5e1;
+            background: #94a3b8;
             cursor: grab;
             position: relative;
+            flex: 1;
         }
 
         #whiteboardContainer:active {
@@ -169,23 +174,25 @@
             cursor: crosshair;
         }
 
-        /* Google Slides Panel */
+        /* Google Slides Panel - Full view */
         #slidesPanel {
-            padding: 20px;
+            padding: 15px;
             overflow-y: auto;
         }
 
         .google-slides-container {
             background: #1e293b;
-            border-radius: 24px;
-            padding: 20px;
-            margin-bottom: 20px;
+            border-radius: 20px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
 
         .embed-input-area {
             display: flex;
-            gap: 12px;
-            margin: 15px 0;
+            gap: 10px;
+            margin: 10px 0;
             flex-wrap: wrap;
         }
 
@@ -197,48 +204,52 @@
             background: #334155;
             color: white;
             outline: none;
+            font-size: 0.85rem;
         }
 
         .slides-preview {
-            margin-top: 20px;
+            flex: 1;
+            margin-top: 15px;
             border-radius: 16px;
             overflow: hidden;
             background: #0f172a;
-            min-height: 400px;
+            min-height: 500px;
+            position: relative;
         }
 
         iframe {
             width: 100%;
-            height: 500px;
+            height: 100%;
+            min-height: 550px;
             border: none;
             border-radius: 16px;
         }
 
         /* Images Panel */
         #imagesPanel {
-            padding: 20px;
+            padding: 15px;
             overflow-y: auto;
         }
 
         .image-grid {
             display: flex;
             flex-wrap: wrap;
-            gap: 16px;
-            margin-top: 16px;
+            gap: 12px;
+            margin-top: 12px;
         }
 
         .image-card {
             background: #1e293b;
             border-radius: 16px;
-            padding: 8px;
-            width: 140px;
+            padding: 6px;
+            width: 120px;
             cursor: pointer;
             text-align: center;
         }
 
         .image-card img {
             width: 100%;
-            height: 100px;
+            height: 90px;
             object-fit: cover;
             border-radius: 12px;
         }
@@ -246,39 +257,40 @@
         /* Google Search Overlay */
         .search-overlay {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 15px;
+            right: 15px;
             z-index: 1000;
             background: #0f172aee;
             backdrop-filter: blur(12px);
             border-radius: 48px;
-            padding: 12px 20px;
+            padding: 8px 16px;
             border: 1px solid #f4a261;
         }
 
         .search-input-area {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             align-items: center;
         }
 
         #googleSearchInput {
-            padding: 8px 16px;
+            padding: 6px 12px;
             border-radius: 32px;
             border: none;
-            width: 220px;
+            width: 200px;
             outline: none;
+            font-size: 0.8rem;
         }
 
         .search-results-popup {
             position: fixed;
-            bottom: 90px;
-            right: 20px;
-            width: 380px;
-            max-height: 450px;
+            bottom: 80px;
+            right: 15px;
+            width: 360px;
+            max-height: 400px;
             background: #1e293b;
-            border-radius: 24px;
-            padding: 12px;
+            border-radius: 20px;
+            padding: 10px;
             overflow-y: auto;
             box-shadow: 0 10px 25px black;
             border: 1px solid #f4a261;
@@ -287,24 +299,24 @@
 
         .search-result-item {
             display: flex;
-            gap: 12px;
-            margin-bottom: 12px;
+            gap: 10px;
+            margin-bottom: 10px;
             background: #334155;
-            border-radius: 16px;
-            padding: 8px;
+            border-radius: 14px;
+            padding: 6px;
             cursor: pointer;
         }
 
         .search-result-item img {
-            width: 60px;
-            height: 60px;
+            width: 55px;
+            height: 55px;
             object-fit: cover;
-            border-radius: 12px;
+            border-radius: 10px;
         }
 
         .result-buttons {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             margin-left: auto;
             align-items: center;
         }
@@ -312,10 +324,10 @@
         .small-action {
             background: #f4a261;
             border: none;
-            padding: 4px 10px;
+            padding: 3px 8px;
             border-radius: 20px;
             cursor: pointer;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: bold;
         }
 
@@ -328,23 +340,26 @@
             display: none;
             position: absolute;
             background: #1e293b;
-            min-width: 120px;
+            min-width: 180px;
             border-radius: 16px;
             padding: 8px;
             top: 35px;
-            z-index: 40;
+            left: 0;
+            z-index: 50;
             flex-wrap: wrap;
-            gap: 6px;
+            gap: 5px;
+            border: 1px solid #f4a261;
         }
 
         .shape-menu button {
             background: #334155;
             border: none;
             color: white;
-            padding: 6px 12px;
+            padding: 5px 10px;
             border-radius: 20px;
             cursor: pointer;
             font-size: 0.7rem;
+            margin: 2px;
         }
 
         .shape-dropdown:hover .shape-menu {
@@ -354,12 +369,12 @@
         .zoom-control {
             background: #0f172a;
             border-radius: 32px;
-            padding: 2px 8px;
+            padding: 2px 6px;
         }
 
         .bg-color-palette {
             display: flex;
-            gap: 6px;
+            gap: 5px;
             margin-left: 5px;
         }
     </style>
@@ -369,16 +384,13 @@
     <div class="toolbar">
         <div class="tool-group">
             <button id="drawPenBtn" class="tool-btn active">✏️ Pen</button>
+            <button id="highlighterBtn" class="tool-btn">🟡 Highlighter</button>
             <button id="eraseBtn" class="tool-btn">🧽 Eraser</button>
             <button id="textToolBtn" class="tool-btn">📝 Text</button>
             <div class="shape-dropdown">
                 <button id="shapesBtn" class="tool-btn">🔷 Shapes ▼</button>
-                <div class="shape-menu">
-                    <button id="rectShapeBtn">⬜ Rectangle</button>
-                    <button id="circleShapeBtn">⚪ Circle</button>
-                    <button id="lineShapeBtn">📏 Line</button>
-                    <button id="arrowShapeBtn">➡️ Arrow</button>
-                    <button id="starShapeBtn">⭐ Star</button>
+                <div class="shape-menu" id="shapeMenuContainer">
+                    <!-- 15 shapes will be populated here -->
                 </div>
             </div>
         </div>
@@ -387,14 +399,13 @@
             <input type="range" id="penWidthSlider" min="2" max="30" value="4">
         </div>
         <div class="tool-group">
-            <span style="color:white; font-size:0.7rem;">Board Color:</span>
-            <div class="bg-color-palette">
-                <div class="color-option" style="background:#ffffff;" data-color="#ffffff"></div>
-                <div class="color-option" style="background:#fef3c7;" data-color="#fef3c7"></div>
-                <div class="color-option" style="background:#d9f99d;" data-color="#d9f99d"></div>
-                <div class="color-option" style="background:#bfdbfe;" data-color="#bfdbfe"></div>
-                <div class="color-option" style="background:#fecaca;" data-color="#fecaca"></div>
-                <div class="color-option" style="background:#e0e7ff;" data-color="#e0e7ff"></div>
+            <span style="color:white; font-size:0.7rem;">Board:</span>
+            <div class="bg-color-palette" id="boardColorPalette">
+                <div class="board-color-option" style="background:#000000;" data-color="#000000"></div>
+                <div class="board-color-option" style="background:#ffffff;" data-color="#ffffff"></div>
+                <div class="board-color-option" style="background:#22c55e;" data-color="#22c55e"></div>
+                <div class="board-color-option" style="background:#3b82f6;" data-color="#3b82f6"></div>
+                <div class="board-color-option" style="background:#ef4444;" data-color="#ef4444"></div>
             </div>
             <button id="clearCanvasBtn" class="tool-btn">🗑️ Clear</button>
         </div>
@@ -415,27 +426,24 @@
 
     <div class="main-area">
         <div id="whiteboardPanel" class="panel active">
-            <div id="whiteboardContainer" style="width:100%; height:100%; overflow:auto; background:#cbd5e1;">
+            <div id="whiteboardContainer" style="width:100%; height:100%; overflow:auto; background:#94a3b8;">
                 <div class="infinite-canvas" id="infiniteCanvasWrapper">
                     <canvas id="mainCanvas" width="4000" height="4000"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- Google Slides Panel - Powerful Embed -->
+        <!-- Google Slides Panel - Larger View -->
         <div id="slidesPanel" class="panel">
-            <div class="google-slides-container">
-                <h3 style="color:#f4a261;">📽️ Google Slides Integration (Best for PPT)</h3>
-                <p style="color:#94a3b8; font-size:0.85rem;">1. Upload your PPT to Google Drive → Open with Google Slides<br>
-                2. Click <strong>File → Share → Publish to web → Embed</strong><br>
-                3. Copy the embed link and paste below:</p>
+            <div class="google-slides-container" style="height: 100%; display: flex; flex-direction: column;">
+                <h3 style="color:#f4a261; font-size:1rem;">📽️ Google Slides Integration</h3>
+                <p style="color:#94a3b8; font-size:0.75rem;">Paste embed link from File → Share → Publish to web → Embed</p>
                 <div class="embed-input-area">
-                    <input type="text" id="googleSlidesUrl" placeholder="Paste Google Slides embed URL here...">
+                    <input type="text" id="googleSlidesUrl" placeholder="https://docs.google.com/presentation/d/.../embed">
                     <button id="loadGoogleSlidesBtn" class="tool-btn">📥 Load Presentation</button>
-                    <button id="showSlidesOnBoardBtn" class="tool-btn">🎯 Show Current Slide on Whiteboard</button>
                 </div>
-                <div id="slidesPreviewContainer" class="slides-preview">
-                    <div style="color:#94a3b8; padding:40px; text-align:center;">📄 Enter a Google Slides embed link to present directly</div>
+                <div id="slidesPreviewContainer" class="slides-preview" style="flex:1; min-height: 0;">
+                    <div style="color:#94a3b8; padding:40px; text-align:center;">📄 Paste a Google Slides embed link above to view presentation here</div>
                 </div>
             </div>
         </div>
@@ -449,9 +457,9 @@
 
     <div class="search-overlay" id="searchOverlay">
         <div class="search-input-area">
-            <input type="text" id="googleSearchInput" placeholder="🔍 Search Google Images... (nature, diagram, etc)">
+            <input type="text" id="googleSearchInput" placeholder="🔍 Search images (diagram, map, etc)">
             <button id="searchGoogleBtn" class="tool-btn">Search</button>
-            <button id="toggleSearchBtn" style="background:#f4a261; border:none; border-radius:30px; padding:4px 10px;">✖</button>
+            <button id="toggleSearchBtn" style="background:#f4a261; border:none; border-radius:30px; padding:3px 8px;">✖</button>
         </div>
     </div>
 </div>
@@ -472,10 +480,6 @@
         let lastX = 0, lastY = 0;
         let canvasState = null;
         
-        // For text placement with cursor
-        let isTextMode = false;
-        let tempTextInput = null;
-        
         // Pan & Zoom
         const container = document.getElementById('whiteboardContainer');
         const wrapper = document.getElementById('infiniteCanvasWrapper');
@@ -491,21 +495,15 @@
             canvasState = ctx.getImageData(0, 0, canvas.width, canvas.height);
         }
         
-        function restoreCanvasState() {
-            if (canvasState) ctx.putImageData(canvasState, 0, 0);
-            else clearFullBoard();
-        }
-        
         function clearFullBoard() {
             const bgColor = localStorage.getItem('boardBgColor') || '#ffffff';
             ctx.fillStyle = bgColor;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             saveCanvasState();
         }
-        clearFullBoard();
         
-        // Board color picker
-        document.querySelectorAll('.color-option').forEach(opt => {
+        // Board color selection
+        document.querySelectorAll('.board-color-option').forEach(opt => {
             opt.addEventListener('click', () => {
                 const color = opt.getAttribute('data-color');
                 localStorage.setItem('boardBgColor', color);
@@ -514,6 +512,8 @@
                 saveCanvasState();
             });
         });
+        
+        clearFullBoard();
         
         function getCanvasCoords(e) {
             const rect = canvas.getBoundingClientRect();
@@ -534,7 +534,7 @@
             return { x, y };
         }
         
-        // Text placement with cursor
+        // Text placement
         function placeTextAt(x, y) {
             const text = prompt("✏️ Enter your text:", "Type here...");
             if (text && text.trim()) {
@@ -543,35 +543,60 @@
                 ctx.fillText(text, x, y);
                 saveCanvasState();
             }
-            isTextMode = false;
-            canvas.style.cursor = 'crosshair';
-            document.getElementById('textToolBtn').classList.remove('active');
             setTool('pen');
         }
         
-        // Drawing shapes
+        // ========== 15 SHAPE FUNCTIONS ==========
+        function drawRectangle(x, y, w, h) {
+            ctx.strokeStyle = currentColor;
+            ctx.fillStyle = currentColor + '40';
+            ctx.lineWidth = currentWidth;
+            ctx.strokeRect(x, y, w, h);
+            saveCanvasState();
+        }
+        
+        function drawCircle(x, y, radius) {
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI*2);
+            ctx.strokeStyle = currentColor;
+            ctx.lineWidth = currentWidth;
+            ctx.stroke();
+            saveCanvasState();
+        }
+        
+        function drawLine(x1, y1, x2, y2) {
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.strokeStyle = currentColor;
+            ctx.lineWidth = currentWidth;
+            ctx.stroke();
+            saveCanvasState();
+        }
+        
         function drawArrow(fromX, fromY, toX, toY) {
             const angle = Math.atan2(toY - fromY, toX - fromX);
             const arrowSize = 20;
-            const arrowX = toX - arrowSize * Math.cos(angle);
-            const arrowY = toY - arrowSize * Math.sin(angle);
             ctx.beginPath();
             ctx.moveTo(fromX, fromY);
             ctx.lineTo(toX, toY);
+            ctx.strokeStyle = currentColor;
+            ctx.lineWidth = currentWidth;
             ctx.stroke();
             ctx.beginPath();
             ctx.moveTo(toX, toY);
-            ctx.lineTo(arrowX - 8 * Math.sin(angle), arrowY + 8 * Math.cos(angle));
-            ctx.lineTo(arrowX + 8 * Math.sin(angle), arrowY - 8 * Math.cos(angle));
+            ctx.lineTo(toX - arrowSize * Math.cos(angle - Math.PI/6), toY - arrowSize * Math.sin(angle - Math.PI/6));
+            ctx.lineTo(toX - arrowSize * Math.cos(angle + Math.PI/6), toY - arrowSize * Math.sin(angle + Math.PI/6));
             ctx.fillStyle = currentColor;
             ctx.fill();
+            saveCanvasState();
         }
         
-        function drawStar(cx, cy, spikes, outerR, innerR) {
+        function drawStar(cx, cy, outerR, innerR, points) {
             let rot = Math.PI/2*3;
-            const step = Math.PI / spikes;
+            const step = Math.PI / points;
             ctx.beginPath();
-            for (let i = 0; i < spikes; i++) {
+            for (let i = 0; i < points; i++) {
                 const x1 = cx + Math.cos(rot) * outerR;
                 const y1 = cy + Math.sin(rot) * outerR;
                 ctx.lineTo(x1, y1);
@@ -582,12 +607,138 @@
                 rot += step;
             }
             ctx.closePath();
-            ctx.fillStyle = currentColor;
+            ctx.fillStyle = currentColor + '80';
             ctx.fill();
             ctx.strokeStyle = currentColor;
+            ctx.lineWidth = currentWidth;
             ctx.stroke();
+            saveCanvasState();
         }
         
+        function drawTriangle(x, y, w, h) {
+            ctx.beginPath();
+            ctx.moveTo(x + w/2, y);
+            ctx.lineTo(x + w, y + h);
+            ctx.lineTo(x, y + h);
+            ctx.closePath();
+            ctx.fillStyle = currentColor + '40';
+            ctx.fill();
+            ctx.strokeStyle = currentColor;
+            ctx.lineWidth = currentWidth;
+            ctx.stroke();
+            saveCanvasState();
+        }
+        
+        function drawDiamond(x, y, w, h) {
+            ctx.beginPath();
+            ctx.moveTo(x + w/2, y);
+            ctx.lineTo(x + w, y + h/2);
+            ctx.lineTo(x + w/2, y + h);
+            ctx.lineTo(x, y + h/2);
+            ctx.closePath();
+            ctx.fillStyle = currentColor + '40';
+            ctx.fill();
+            ctx.stroke();
+            saveCanvasState();
+        }
+        
+        function drawHeart(x, y, size) {
+            ctx.beginPath();
+            ctx.moveTo(x, y + size/4);
+            ctx.bezierCurveTo(x, y, x + size/2, y, x + size/2, y + size/4);
+            ctx.bezierCurveTo(x + size/2, y, x + size, y, x + size, y + size/4);
+            ctx.bezierCurveTo(x + size, y + size/2, x + size/2, y + size*0.75, x + size/2, y + size);
+            ctx.bezierCurveTo(x + size/2, y + size*0.75, x, y + size/2, x, y + size/4);
+            ctx.fillStyle = currentColor + '80';
+            ctx.fill();
+            ctx.stroke();
+            saveCanvasState();
+        }
+        
+        // Shape mapping
+        const shapes = {
+            'rectangle': drawRectangle,
+            'circle': drawCircle,
+            'line': drawLine,
+            'arrow': drawArrow,
+            'star': (x, y, w, h) => drawStar(x + w/2, y + h/2, w/2, w/4, 5),
+            'triangle': drawTriangle,
+            'diamond': drawDiamond,
+            'heart': (x, y, w, h) => drawHeart(x, y, Math.min(w, h)),
+            'square': (x, y, w, h) => drawRectangle(x, y, Math.min(w, h), Math.min(w, h)),
+            'oval': (x, y, w, h) => {
+                ctx.beginPath();
+                ctx.ellipse(x + w/2, y + h/2, w/2, h/2, 0, 0, Math.PI*2);
+                ctx.stroke();
+                saveCanvasState();
+            },
+            'pentagon': (x, y, w, h) => {
+                ctx.beginPath();
+                const centerX = x + w/2, centerY = y + h/2, radius = Math.min(w, h)/2;
+                for(let i=0; i<5; i++) {
+                    const angle = -Math.PI/2 + i * 2*Math.PI/5;
+                    const px = centerX + radius * Math.cos(angle);
+                    const py = centerY + radius * Math.sin(angle);
+                    if(i===0) ctx.moveTo(px, py);
+                    else ctx.lineTo(px, py);
+                }
+                ctx.closePath();
+                ctx.stroke();
+                saveCanvasState();
+            },
+            'hexagon': (x, y, w, h) => {
+                ctx.beginPath();
+                const centerX = x + w/2, centerY = y + h/2, radius = Math.min(w, h)/2;
+                for(let i=0; i<6; i++) {
+                    const angle = i * 2*Math.PI/6;
+                    const px = centerX + radius * Math.cos(angle);
+                    const py = centerY + radius * Math.sin(angle);
+                    if(i===0) ctx.moveTo(px, py);
+                    else ctx.lineTo(px, py);
+                }
+                ctx.closePath();
+                ctx.stroke();
+                saveCanvasState();
+            },
+            'cloud': (x, y, w, h) => {
+                ctx.beginPath();
+                ctx.arc(x + w*0.2, y + h*0.5, w*0.25, 0, Math.PI*2);
+                ctx.arc(x + w*0.5, y + h*0.3, w*0.3, 0, Math.PI*2);
+                ctx.arc(x + w*0.8, y + h*0.5, w*0.25, 0, Math.PI*2);
+                ctx.arc(x + w*0.5, y + h*0.7, w*0.2, 0, Math.PI*2);
+                ctx.stroke();
+                saveCanvasState();
+            },
+            'cross': (x, y, w, h) => {
+                ctx.beginPath();
+                ctx.moveTo(x + w/2, y);
+                ctx.lineTo(x + w/2, y + h);
+                ctx.moveTo(x, y + h/2);
+                ctx.lineTo(x + w, y + h/2);
+                ctx.stroke();
+                saveCanvasState();
+            }
+        };
+        
+        let currentShape = 'rectangle';
+        let shapeStart = null;
+        
+        // Build 15 shapes menu
+        const shapeNames = ['rectangle', 'circle', 'line', 'arrow', 'star', 'triangle', 'diamond', 'heart', 'square', 'oval', 'pentagon', 'hexagon', 'cloud', 'cross'];
+        const shapeIcons = { rectangle:'⬜', circle:'⚪', line:'📏', arrow:'➡️', star:'⭐', triangle:'🔺', diamond:'🔷', heart:'❤️', square:'⬛', oval:'⚫', pentagon:'⬟', hexagon:'⬡', cloud:'☁️', cross:'✚' };
+        const shapeMenu = document.getElementById('shapeMenuContainer');
+        shapeNames.forEach(shape => {
+            const btn = document.createElement('button');
+            btn.innerHTML = `${shapeIcons[shape] || '📐'} ${shape.charAt(0).toUpperCase()+shape.slice(1)}`;
+            btn.onclick = () => {
+                currentShape = shape;
+                document.getElementById('shapesBtn').innerHTML = `${shapeIcons[shape] || '🔷'} ${shape.charAt(0).toUpperCase()+shape.slice(1)} ▼`;
+                setTool('shape');
+            };
+            shapeMenu.appendChild(btn);
+        });
+        
+        // Drawing logic
         function startDrawing(e) {
             if (currentTool === 'pan') return;
             drawing = true;
@@ -611,6 +762,9 @@
                 drawing = false;
                 return;
             }
+            if (currentTool === 'shape') {
+                shapeStart = { x: startX, y: startY };
+            }
         }
         
         function drawMove(e) {
@@ -628,48 +782,36 @@
                 lastX = currX; lastY = currY;
                 saveCanvasState();
             }
+            else if (currentTool === 'highlighter') {
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(currX, currY);
+                ctx.strokeStyle = currentColor;
+                ctx.lineWidth = currentWidth * 1.5;
+                ctx.globalAlpha = 0.4;
+                ctx.stroke();
+                ctx.globalAlpha = 1;
+                lastX = currX; lastY = currY;
+                saveCanvasState();
+            }
         }
         
         function endDrawing(e) {
             if (!drawing) return;
             const pos = getCanvasCoords(e);
             const endX = pos.x, endY = pos.y;
+            const w = endX - startX, h = endY - startY;
             
-            if (currentTool === 'rectangle') {
-                const w = endX - startX, h = endY - startY;
+            if (currentTool === 'shape' && shapeStart) {
                 ctx.strokeStyle = currentColor;
+                ctx.fillStyle = currentColor + '30';
                 ctx.lineWidth = currentWidth;
-                ctx.strokeRect(startX, startY, w, h);
-                saveCanvasState();
-            }
-            else if (currentTool === 'circle') {
-                const radius = Math.hypot(endX - startX, endY - startY);
-                ctx.beginPath();
-                ctx.arc(startX, startY, radius, 0, Math.PI*2);
-                ctx.strokeStyle = currentColor;
-                ctx.lineWidth = currentWidth;
-                ctx.stroke();
-                saveCanvasState();
-            }
-            else if (currentTool === 'line') {
-                ctx.beginPath();
-                ctx.moveTo(startX, startY);
-                ctx.lineTo(endX, endY);
-                ctx.strokeStyle = currentColor;
-                ctx.lineWidth = currentWidth;
-                ctx.stroke();
-                saveCanvasState();
-            }
-            else if (currentTool === 'arrow') {
-                drawArrow(startX, startY, endX, endY);
-                saveCanvasState();
-            }
-            else if (currentTool === 'star') {
-                const radius = Math.hypot(endX - startX, endY - startY);
-                drawStar(startX, startY, 5, radius, radius/2);
+                const shapeFn = shapes[currentShape];
+                if(shapeFn) shapeFn(startX, startY, Math.abs(w), Math.abs(h));
                 saveCanvasState();
             }
             drawing = false;
+            shapeStart = null;
         }
         
         canvas.addEventListener('mousedown', startDrawing);
@@ -682,24 +824,20 @@
         // Tool management
         function setTool(tool) {
             currentTool = tool;
-            isTextMode = (tool === 'text');
             canvas.style.cursor = (tool === 'text') ? 'text' : 'crosshair';
             document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
             if (tool === 'pen') document.getElementById('drawPenBtn').classList.add('active');
+            if (tool === 'highlighter') document.getElementById('highlighterBtn').classList.add('active');
             if (tool === 'erase') document.getElementById('eraseBtn').classList.add('active');
             if (tool === 'text') document.getElementById('textToolBtn').classList.add('active');
             if (tool === 'pan') document.getElementById('panModeBtn').classList.add('active');
+            ctx.globalAlpha = 1;
         }
         
         document.getElementById('drawPenBtn').onclick = () => setTool('pen');
+        document.getElementById('highlighterBtn').onclick = () => setTool('highlighter');
         document.getElementById('eraseBtn').onclick = () => setTool('erase');
         document.getElementById('textToolBtn').onclick = () => setTool('text');
-        document.getElementById('rectShapeBtn').onclick = () => { setTool('rectangle'); document.getElementById('shapesBtn').innerHTML = '⬜ Rect ▼'; };
-        document.getElementById('circleShapeBtn').onclick = () => { setTool('circle'); document.getElementById('shapesBtn').innerHTML = '⚪ Circle ▼'; };
-        document.getElementById('lineShapeBtn').onclick = () => { setTool('line'); document.getElementById('shapesBtn').innerHTML = '📏 Line ▼'; };
-        document.getElementById('arrowShapeBtn').onclick = () => { setTool('arrow'); document.getElementById('shapesBtn').innerHTML = '➡️ Arrow ▼'; };
-        document.getElementById('starShapeBtn').onclick = () => { setTool('star'); document.getElementById('shapesBtn').innerHTML = '⭐ Star ▼'; };
-        
         document.getElementById('panModeBtn').onclick = () => setTool('pan');
         document.getElementById('penColorPicker').onchange = (e) => currentColor = e.target.value;
         document.getElementById('penWidthSlider').oninput = (e) => currentWidth = parseInt(e.target.value);
@@ -729,31 +867,19 @@
         document.getElementById('zoomOutBtn').onclick = () => { scale = Math.max(scale - 0.1, 0.3); updateTransform(); };
         document.getElementById('resetViewBtn').onclick = () => { scale = 1; panX = 0; panY = 0; updateTransform(); };
         
-        // ========== GOOGLE SLIDES INTEGRATION ==========
-        let currentEmbedUrl = '';
+        // Google Slides Integration
         const slidesPreview = document.getElementById('slidesPreviewContainer');
-        
         document.getElementById('loadGoogleSlidesBtn').onclick = () => {
             let url = document.getElementById('googleSlidesUrl').value.trim();
             if (!url) { alert("Please paste Google Slides embed URL"); return; }
-            // Extract embed URL if full link given
-            if (url.includes('pub') || url.includes('embed')) {
-                currentEmbedUrl = url;
-            } else if (url.includes('/d/')) {
+            if (url.includes('/d/') && !url.includes('embed')) {
                 const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-                if (match) {
-                    currentEmbedUrl = `https://docs.google.com/presentation/d/${match[1]}/embed`;
-                }
+                if (match) url = `https://docs.google.com/presentation/d/${match[1]}/embed`;
             }
-            if (!currentEmbedUrl) { alert("Invalid Google Slides link. Use the 'Embed' link from File > Publish to web"); return; }
-            slidesPreview.innerHTML = `<iframe src="${currentEmbedUrl}" allowfullscreen></iframe>`;
+            slidesPreview.innerHTML = `<iframe src="${url}" allowfullscreen style="width:100%; height:100%; min-height:550px;"></iframe>`;
         };
         
-        document.getElementById('showSlidesOnBoardBtn').onclick = () => {
-            alert("📌 To put a slide on whiteboard: Take a screenshot of the slide (Windows+Shift+S) or use the Google Slides iframe side by side. For direct slide capture, use the 'My Images' search to find diagrams.");
-        };
-        
-        // ========== GOOGLE IMAGE SEARCH ==========
+        // Google Image Search
         const searchBtn = document.getElementById('searchGoogleBtn');
         const searchInput = document.getElementById('googleSearchInput');
         let resultsPopup = null;
@@ -763,14 +889,14 @@
             if (resultsPopup) resultsPopup.remove();
             resultsPopup = document.createElement('div');
             resultsPopup.className = 'search-results-popup';
-            resultsPopup.innerHTML = '<div style="color:#ffd966;">🔎 Searching high-quality images...</div>';
+            resultsPopup.innerHTML = '<div style="color:#ffd966;">🔎 Searching images...</div>';
             document.body.appendChild(resultsPopup);
             
             const imageUrls = [];
             for(let i=0;i<12;i++) {
                 imageUrls.push(`https://source.unsplash.com/featured/300x200?${encodeURIComponent(query)}&sig=${Date.now()}+${i}`);
             }
-            resultsPopup.innerHTML = '<div style="color:#ffd966;">✨ Click any image → Choose action ✨</div>';
+            resultsPopup.innerHTML = '<div style="color:#ffd966;">✨ Click image → Choose action ✨</div>';
             for(let url of imageUrls) {
                 const resultDiv = document.createElement('div');
                 resultDiv.className = 'search-result-item';
@@ -779,16 +905,15 @@
                 const btnDiv = document.createElement('div');
                 btnDiv.className = 'result-buttons';
                 const showBtn = document.createElement('button');
-                showBtn.innerText = '📌 Show on Board';
+                showBtn.innerText = '📌 Board';
                 showBtn.className = 'small-action';
                 const saveBtn = document.createElement('button');
-                saveBtn.innerText = '💾 Save to Images';
+                saveBtn.innerText = '💾 Save';
                 saveBtn.className = 'small-action';
                 
                 showBtn.onclick = () => {
                     const fullImg = new Image();
                     fullImg.onload = () => {
-                        ctx.clearRect(0,0,canvas.width,canvas.height);
                         const bg = localStorage.getItem('boardBgColor') || '#ffffff';
                         ctx.fillStyle = bg;
                         ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -803,7 +928,6 @@
                     };
                     fullImg.src = url;
                 };
-                
                 saveBtn.onclick = () => {
                     const saveImg = new Image();
                     saveImg.crossOrigin = "Anonymous";
@@ -812,10 +936,9 @@
                         tempCanvas.width = saveImg.width;
                         tempCanvas.height = saveImg.height;
                         tempCanvas.getContext('2d').drawImage(saveImg,0,0);
-                        const dataURL = tempCanvas.toDataURL();
-                        userImages.push({ id: Date.now(), dataURL: dataURL });
+                        userImages.push({ id: Date.now(), dataURL: tempCanvas.toDataURL() });
                         renderImageLibrary();
-                        alert("✅ Saved to My Images tab!");
+                        alert("✅ Saved to My Images!");
                         if(resultsPopup) resultsPopup.remove();
                     };
                     saveImg.src = url;
@@ -832,11 +955,11 @@
         searchInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') searchGoogleImages(searchInput.value); });
         document.getElementById('toggleSearchBtn').onclick = () => { if(resultsPopup) resultsPopup.remove(); };
         
-        // ========== IMAGES LIBRARY ==========
+        // Images Library
         let userImages = [];
         const imageGrid = document.getElementById('imageLibraryGrid');
         function renderImageLibrary() {
-            if(userImages.length === 0) { imageGrid.innerHTML = '<div style="color:#aaa;">No saved images. Use Google Search → Save to My Images.</div>'; return; }
+            if(userImages.length === 0) { imageGrid.innerHTML = '<div style="color:#aaa;">No saved images. Search & save images.</div>'; return; }
             imageGrid.innerHTML = '';
             userImages.forEach(img => {
                 const card = document.createElement('div');
@@ -847,7 +970,6 @@
                 card.onclick = () => {
                     const big = new Image();
                     big.onload = () => {
-                        ctx.clearRect(0,0,canvas.width,canvas.height);
                         const bg = localStorage.getItem('boardBgColor') || '#ffffff';
                         ctx.fillStyle = bg;
                         ctx.fillRect(0,0,canvas.width,canvas.height);

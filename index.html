@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Teaching Whiteboard | Slides + PDF + Images</title>
+    <title>Teaching Whiteboard | PDF Annotator + Fullscreen Slides</title>
     <style>
         * {
             margin: 0;
@@ -79,17 +79,25 @@
             background: #e34234;
         }
 
+        /* Horizontal board color options - FIXED */
+        .board-color-row {
+            display: flex;
+            flex-direction: row;
+            gap: 8px;
+            align-items: center;
+            margin-left: 8px;
+        }
         .board-color-option {
             width: 28px;
             height: 28px;
             border-radius: 6px;
             cursor: pointer;
-            border: 1px solid #4a5568;
+            border: 2px solid #4a5568;
             transition: 0.1s;
         }
-
         .board-color-option:hover {
             transform: scale(0.95);
+            border-color: white;
         }
 
         input[type="range"] {
@@ -138,7 +146,6 @@
             height: 100%;
             display: none;
             background: #0f121c;
-            overflow-y: auto;
         }
 
         .panel.active {
@@ -176,37 +183,27 @@
             cursor: crosshair;
         }
 
-        /* Google Slides Panel */
+        /* Google Slides - Full Screen Size */
         .slides-container {
-            padding: 20px;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+        }
+        .google-slides-section {
+            background: #0a0d16;
+            height: 100%;
+            width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            height: 100%;
+            border-radius: 0;
         }
-
-        .google-slides-section {
-            background: #1a2133;
-            border-radius: 12px;
-            padding: 16px;
-        }
-
-        .section-title {
-            color: #cbd5e6;
-            font-size: 0.9rem;
-            font-weight: 500;
-            margin-bottom: 12px;
-            border-left: 3px solid #4a6fa5;
-            padding-left: 10px;
-        }
-
         .embed-input-area {
             display: flex;
             gap: 12px;
-            margin: 12px 0;
-            flex-wrap: wrap;
+            padding: 12px 20px;
+            background: #1a2133;
+            border-bottom: 1px solid #2d3548;
         }
-
         #googleSlidesUrl {
             flex: 1;
             padding: 10px 16px;
@@ -216,23 +213,16 @@
             color: #e2e8f0;
             outline: none;
             font-size: 0.85rem;
-            font-family: inherit;
         }
-
         .slides-preview {
-            margin-top: 15px;
-            border-radius: 12px;
-            overflow: hidden;
+            flex: 1;
             background: #0a0d16;
-            min-height: 450px;
             position: relative;
         }
-
         .slides-preview iframe {
             width: 100%;
-            height: 500px;
+            height: 100%;
             border: none;
-            border-radius: 8px;
         }
 
         /* Library Panel */
@@ -244,20 +234,25 @@
             height: 100%;
             overflow-y: auto;
         }
-
         .upload-section {
             background: #1a2133;
             border-radius: 12px;
             padding: 16px;
         }
-
+        .section-title {
+            color: #cbd5e6;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 12px;
+            border-left: 3px solid #4a6fa5;
+            padding-left: 10px;
+        }
         .upload-area {
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
             margin-bottom: 16px;
         }
-
         .file-input-wrapper {
             background: #2a3348;
             padding: 8px 16px;
@@ -269,11 +264,9 @@
             align-items: center;
             gap: 6px;
         }
-
         .file-input-wrapper input {
             display: none;
         }
-
         .items-grid {
             display: flex;
             flex-wrap: wrap;
@@ -283,7 +276,6 @@
             overflow-y: auto;
             padding: 8px;
         }
-
         .library-item {
             background: #2a3348;
             border-radius: 12px;
@@ -294,21 +286,16 @@
             border: 1px solid #4a5568;
             transition: all 0.15s ease;
         }
-
         .library-item:hover {
             background: #3a4562;
             border-color: #4a6fa5;
-            transform: translateY(-2px);
         }
-
         .library-item img {
             width: 100%;
             height: 100px;
             object-fit: cover;
             border-radius: 8px;
-            background: #0f121c;
         }
-
         .library-item .pdf-icon {
             width: 100%;
             height: 100px;
@@ -321,98 +308,94 @@
             font-size: 2rem;
             font-weight: bold;
         }
-
         .library-item .item-name {
             font-size: 0.65rem;
             color: #94a3b8;
             margin-top: 6px;
-            word-break: break-all;
         }
 
-        /* Modal for PDF/Image Viewer */
-        .modal-overlay {
+        /* Full Screen PDF Viewer with Annotation Tools */
+        .pdf-modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.85);
+            background: #0a0d16;
             z-index: 2000;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(4px);
-        }
-        .modal-content {
-            background: #1a2133;
-            border-radius: 16px;
-            width: 90%;
-            height: 90%;
-            display: flex;
             flex-direction: column;
-            border: 1px solid #4a6fa5;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
         }
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 20px;
-            border-bottom: 1px solid #2d3548;
+        .pdf-toolbar {
             background: #141a2a;
-            border-radius: 16px 16px 0 0;
+            padding: 8px 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            border-bottom: 1px solid #4a6fa5;
         }
-        .modal-header h4 {
-            color: #cbd5e6;
-            font-weight: 500;
-        }
-        .modal-close {
-            background: #5a3a3a;
+        .pdf-tool-btn {
+            background: #2a3348;
             border: none;
-            color: white;
-            padding: 4px 12px;
+            color: #e2e8f0;
+            padding: 6px 14px;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 0.8rem;
-        }
-        .modal-close:hover {
-            background: #7a4a4a;
-        }
-        .modal-body {
-            flex: 1;
-            overflow: auto;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .pdf-embed {
-            width: 100%;
-            height: 100%;
-            min-height: 500px;
-            border: none;
-            border-radius: 8px;
-        }
-        .image-preview {
-            max-width: 100%;
-            max-height: 80%;
-            display: block;
-            margin: 0 auto;
-            border-radius: 8px;
-        }
-        .add-to-board-btn {
-            background: #4a6fa5;
-            border: none;
-            color: white;
-            padding: 8px 24px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            margin-top: 16px;
+            font-size: 0.7rem;
             font-weight: 500;
         }
+        .pdf-tool-btn.active {
+            background: #4a6fa5;
+            color: white;
+        }
+        .pdf-tool-btn.laser {
+            background: #e34234;
+        }
+        .pdf-content-area {
+            flex: 1;
+            display: flex;
+            position: relative;
+            background: #2d3548;
+            overflow: auto;
+        }
+        .pdf-page-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            min-height: 100%;
+        }
+        .pdf-canvas-layer {
+            position: relative;
+            display: inline-block;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            background: white;
+        }
+        #pdfCanvas {
+            display: block;
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: calc(100vh - 70px);
+            object-fit: contain;
+            background: white;
+        }
+        .annotation-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+        }
+        .pdf-close-btn {
+            background: #5a3a3a;
+            margin-left: auto;
+        }
 
-        /* Shape dropdown */
         .shape-dropdown {
             position: relative;
             display: inline-block;
@@ -430,7 +413,6 @@
             flex-wrap: wrap;
             gap: 8px;
             border: 1px solid #4a6fa5;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         }
         .shape-menu.show {
             display: flex;
@@ -444,22 +426,7 @@
             cursor: pointer;
             font-size: 0.7rem;
         }
-        .shape-menu button:hover {
-            background: #4a6fa5;
-        }
 
-        .zoom-control {
-            background: #1a2133;
-            border-radius: 8px;
-            padding: 2px 6px;
-        }
-        .bg-color-palette {
-            display: flex;
-            gap: 6px;
-            margin-left: 6px;
-        }
-
-        /* Search overlay */
         .search-overlay {
             position: fixed;
             bottom: 20px;
@@ -485,7 +452,6 @@
             width: 210px;
             outline: none;
             font-size: 0.8rem;
-            font-family: inherit;
         }
         .search-results-popup {
             position: fixed;
@@ -497,7 +463,6 @@
             border-radius: 16px;
             padding: 12px;
             overflow-y: auto;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
             border: 1px solid #4a6fa5;
             z-index: 1001;
         }
@@ -528,7 +493,6 @@
             border-radius: 20px;
             cursor: pointer;
             font-size: 0.7rem;
-            font-weight: 500;
             color: white;
         }
     </style>
@@ -550,22 +514,26 @@
         <div class="tool-group">
             <input type="color" id="penColorPicker" class="color-picker" value="#e34234">
             <input type="range" id="penWidthSlider" min="2" max="30" value="4">
-            <span style="color:#94a3b8; font-size:0.7rem;">Size</span>
         </div>
+        
+        <!-- Board Color Options - HORIZONTAL LINE (Fixed) -->
         <div class="tool-group">
             <span style="color:#94a3b8; font-size:0.7rem;">Board:</span>
-            <div class="bg-color-palette" id="boardColorPalette">
-                <div class="board-color-option" style="background:#1a1e2c;" data-color="#1a1e2c"></div>
-                <div class="board-color-option" style="background:#ffffff;" data-color="#ffffff"></div>
-                <div class="board-color-option" style="background:#d4e6c3;" data-color="#d4e6c3"></div>
-                <div class="board-color-option" style="background:#b8d4e3;" data-color="#b8d4e3"></div>
-                <div class="board-color-option" style="background:#f0d8d8;" data-color="#f0d8d8"></div>
+            <div class="board-color-row" id="boardColorRow">
+                <div class="board-color-option" style="background:#1a1e2c;" data-color="#1a1e2c" title="Dark"></div>
+                <div class="board-color-option" style="background:#ffffff;" data-color="#ffffff" title="White"></div>
+                <div class="board-color-option" style="background:#d4e6c3;" data-color="#d4e6c3" title="Light Green"></div>
+                <div class="board-color-option" style="background:#b8d4e3;" data-color="#b8d4e3" title="Light Blue"></div>
+                <div class="board-color-option" style="background:#f0d8d8;" data-color="#f0d8d8" title="Light Pink"></div>
+                <div class="board-color-option" style="background:#fae8c8;" data-color="#fae8c8" title="Cream"></div>
+                <div class="board-color-option" style="background:#c8e6d9;" data-color="#c8e6d9" title="Mint"></div>
             </div>
             <button id="clearCanvasBtn" class="tool-btn">Clear</button>
         </div>
-        <div class="tool-group zoom-control">
+        
+        <div class="tool-group">
             <button id="zoomOutBtn" class="tool-btn">Zoom Out</button>
-            <span id="zoomLevel" style="color:#e2e8f0;">100%</span>
+            <span id="zoomLevel">100%</span>
             <button id="zoomInBtn" class="tool-btn">Zoom In</button>
             <button id="resetViewBtn" class="tool-btn">Reset</button>
             <button id="panModeBtn" class="tool-btn">Pan</button>
@@ -579,7 +547,6 @@
     </div>
 
     <div class="main-area">
-        <!-- Whiteboard Panel -->
         <div id="whiteboardPanel" class="panel active">
             <div id="whiteboardContainer" style="width:100%; height:100%; overflow:auto; background:#8c99ac;">
                 <div class="infinite-canvas" id="infiniteCanvasWrapper">
@@ -588,485 +555,283 @@
             </div>
         </div>
 
-        <!-- Google Slides Panel -->
         <div id="slidesPanel" class="panel">
             <div class="slides-container">
                 <div class="google-slides-section">
-                    <div class="section-title">Google Slides Presentation</div>
-                    <p style="color:#7e8aa8; font-size:0.7rem; margin-bottom:8px;">Paste embed link from File → Share → Publish to web → Embed</p>
                     <div class="embed-input-area">
-                        <input type="text" id="googleSlidesUrl" placeholder="https://docs.google.com/presentation/d/.../embed">
-                        <button id="loadGoogleSlidesBtn" class="tool-btn">Load Presentation</button>
+                        <input type="text" id="googleSlidesUrl" placeholder="Paste Google Slides embed URL...">
+                        <button id="loadGoogleSlidesBtn" class="tool-btn">Load Fullscreen Slides</button>
                     </div>
                     <div id="slidesPreviewContainer" class="slides-preview">
-                        <div style="color:#7e8aa8; padding:40px; text-align:center;">No slides loaded. Paste a Google Slides embed link above.</div>
+                        <div style="color:#7e8aa8; display:flex; align-items:center; justify-content:center; height:100%;">Enter a Google Slides embed link above</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Library Panel (PDF + Images) -->
         <div id="libraryPanel" class="panel">
             <div class="library-container">
                 <div class="upload-section">
                     <div class="section-title">Upload PDF, JPG or PNG</div>
                     <div class="upload-area">
-                        <label class="file-input-wrapper">
-                            📄 Add PDF
-                            <input type="file" id="pdfUploadInput" accept=".pdf" multiple>
-                        </label>
-                        <label class="file-input-wrapper">
-                            🖼️ Add Image (JPG/PNG)
-                            <input type="file" id="imageUploadInput" accept="image/jpeg,image/png,image/jpg,image/webp" multiple>
-                        </label>
+                        <label class="file-input-wrapper">📄 Add PDF<input type="file" id="pdfUploadInput" accept=".pdf" multiple></label>
+                        <label class="file-input-wrapper">🖼️ Add Image<input type="file" id="imageUploadInput" accept="image/jpeg,image/png,image/jpg" multiple></label>
                         <button id="clearLibraryBtn" class="tool-btn" style="background:#5a3a3a;">Clear All</button>
                     </div>
                     <div id="libraryItemsGrid" class="items-grid">
-                        <div style="color:#7e8aa8; width:100%; text-align:center;">No files. Add PDF, JPG or PNG files above. Click any file to view.</div>
+                        <div style="color:#7e8aa8; text-align:center;">No files. Add PDF or images above. Click to open in fullscreen with annotation tools.</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Search Overlay for Online Images -->
-    <div class="search-overlay" id="searchOverlay">
+    <div class="search-overlay">
         <div class="search-input-area">
             <input type="text" id="googleSearchInput" placeholder="Search online images">
             <button id="searchGoogleBtn" class="tool-btn">Search</button>
-            <button id="toggleSearchBtn" style="background:#4a6fa5; border:none; border-radius:30px; padding:3px 10px; color:white;">X</button>
+            <button id="toggleSearchBtn" style="background:#4a6fa5; border:none; border-radius:30px; padding:3px 10px;">X</button>
         </div>
     </div>
 </div>
 
 <script>
     (function() {
-        // ========== CANVAS SETUP ==========
+        // ========== WHITEBOARD SETUP ==========
         const canvas = document.getElementById('mainCanvas');
         const ctx = canvas.getContext('2d');
         canvas.width = 4000;
         canvas.height = 4000;
         
-        let historyStack = [];
-        let currentStateIndex = -1;
-        let isUndoRedoAction = false;
+        let historyStack = [], currentStateIndex = -1, isUndoRedoAction = false;
+        function saveToHistory() { if (isUndoRedoAction) return; if (currentStateIndex < historyStack.length - 1) historyStack = historyStack.slice(0, currentStateIndex + 1); const imgData = ctx.getImageData(0,0,canvas.width,canvas.height); historyStack.push(imgData); currentStateIndex = historyStack.length - 1; if (historyStack.length > 50) historyStack.shift(); }
+        function restoreFromHistory(i) { if (i<0 || i>=historyStack.length) return; isUndoRedoAction=true; ctx.putImageData(historyStack[i],0,0); currentStateIndex=i; isUndoRedoAction=false; }
+        function undo() { if (currentStateIndex>0) restoreFromHistory(currentStateIndex-1); }
+        function clearFullBoard() { const bg=localStorage.getItem('boardBgColor')||'#ffffff'; ctx.fillStyle=bg; ctx.fillRect(0,0,canvas.width,canvas.height); saveToHistory(); }
+        function setBoardColor(c) { localStorage.setItem('boardBgColor',c); ctx.globalCompositeOperation='destination-over'; ctx.fillStyle=c; ctx.fillRect(0,0,canvas.width,canvas.height); ctx.globalCompositeOperation='source-over'; saveToHistory(); }
         
-        function saveToHistory() {
-            if (isUndoRedoAction) return;
-            if (currentStateIndex < historyStack.length - 1) {
-                historyStack = historyStack.slice(0, currentStateIndex + 1);
-            }
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            historyStack.push(imageData);
-            currentStateIndex = historyStack.length - 1;
-            if (historyStack.length > 50) historyStack.shift();
-        }
+        let drawing=false, currentTool='pen', currentColor='#e34234', currentWidth=4, startX=0,startY=0,lastX=0,lastY=0, currentShape='rectangle', shapeStart=null;
+        const container=document.getElementById('whiteboardContainer'), wrapper=document.getElementById('infiniteCanvasWrapper');
+        let scale=1, panX=0, panY=0;
+        function updateTransform() { wrapper.style.transform=`translate(${panX}px, ${panY}px) scale(${scale})`; document.getElementById('zoomLevel').innerText=Math.round(scale*100)+'%'; }
+        function getCanvasCoords(e) { const rect=canvas.getBoundingClientRect(); const sx=canvas.width/rect.width, sy=canvas.height/rect.height; let cx,cy; if(e.touches){cx=e.touches[0].clientX; cy=e.touches[0].clientY;} else {cx=e.clientX; cy=e.clientY;} let x=(cx-rect.left)*sx; let y=(cy-rect.top)*sy; return {x:Math.min(Math.max(0,x),canvas.width), y:Math.min(Math.max(0,y),canvas.height)}; }
+        function placeTextAt(x,y) { const text=prompt("Enter text:"); if(text && text.trim()){ ctx.font=`500 ${Math.max(16,currentWidth*2.5)}px -apple-system`; ctx.fillStyle=currentColor; ctx.fillText(text,x,y); saveToHistory(); } setTool('pen'); }
         
-        function restoreFromHistory(index) {
-            if (index < 0 || index >= historyStack.length) return;
-            isUndoRedoAction = true;
-            ctx.putImageData(historyStack[index], 0, 0);
-            currentStateIndex = index;
-            isUndoRedoAction = false;
-        }
-        
-        function undo() { if (currentStateIndex > 0) restoreFromHistory(currentStateIndex - 1); }
-        function clearFullBoard() {
-            const bgColor = localStorage.getItem('boardBgColor') || '#ffffff';
-            ctx.fillStyle = bgColor;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            saveToHistory();
-        }
-        function setBoardColor(color) {
-            localStorage.setItem('boardBgColor', color);
-            ctx.globalCompositeOperation = 'destination-over';
-            ctx.fillStyle = color;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.globalCompositeOperation = 'source-over';
-            saveToHistory();
-        }
-        
-        // Drawing variables
-        let drawing = false;
-        let currentTool = 'pen';
-        let currentColor = '#e34234';
-        let currentWidth = 4;
-        let startX = 0, startY = 0;
-        let lastX = 0, lastY = 0;
-        let currentShape = 'rectangle';
-        let shapeStart = null;
-        
-        // Pan & Zoom
-        const container = document.getElementById('whiteboardContainer');
-        const wrapper = document.getElementById('infiniteCanvasWrapper');
-        let scale = 1, panX = 0, panY = 0;
-        function updateTransform() {
-            wrapper.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
-            document.getElementById('zoomLevel').innerText = Math.round(scale * 100) + '%';
-        }
-        
-        function getCanvasCoords(e) {
-            const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            let clientX, clientY;
-            if (e.touches) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; }
-            else { clientX = e.clientX; clientY = e.clientY; }
-            let x = (clientX - rect.left) * scaleX;
-            let y = (clientY - rect.top) * scaleY;
-            return { x: Math.min(Math.max(0, x), canvas.width), y: Math.min(Math.max(0, y), canvas.height) };
-        }
-        
-        function placeTextAt(x, y) {
-            const text = prompt("Enter your text:", "Type here...");
-            if (text && text.trim()) {
-                ctx.font = `500 ${Math.max(16, currentWidth * 2.5)}px -apple-system, BlinkMacSystemFont, 'Segoe UI'`;
-                ctx.fillStyle = currentColor;
-                ctx.fillText(text, x, y);
-                saveToHistory();
-            }
-            setTool('pen');
-        }
-        
-        // Shapes
         const shapes = {
-            rectangle: (x, y, w, h) => { ctx.strokeRect(x, y, w, h); saveToHistory(); },
-            circle: (x, y, w, h) => { const r = Math.min(Math.abs(w), Math.abs(h))/2; ctx.beginPath(); ctx.arc(x+w/2, y+h/2, r, 0, Math.PI*2); ctx.stroke(); saveToHistory(); },
-            line: (x, y, w, h) => { ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x+w, y+h); ctx.stroke(); saveToHistory(); },
-            arrow: (x, y, w, h) => {
-                const toX = x+w, toY = y+h, angle = Math.atan2(toY-y, toX-x), size = 20;
-                ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(toX, toY); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(toX, toY);
-                ctx.lineTo(toX - size * Math.cos(angle - Math.PI/6), toY - size * Math.sin(angle - Math.PI/6));
-                ctx.lineTo(toX - size * Math.cos(angle + Math.PI/6), toY - size * Math.sin(angle + Math.PI/6));
-                ctx.fillStyle = currentColor; ctx.fill();
-                saveToHistory();
-            },
-            star: (x, y, w, h) => {
-                const cx = x+w/2, cy = y+h/2, outer = Math.min(w, h)/2, inner = outer/2;
-                let rot = Math.PI/2*3, step = Math.PI/5;
-                ctx.beginPath();
-                for (let i = 0; i < 5; i++) {
-                    ctx.lineTo(cx + Math.cos(rot) * outer, cy + Math.sin(rot) * outer);
-                    rot += step;
-                    ctx.lineTo(cx + Math.cos(rot) * inner, cy + Math.sin(rot) * inner);
-                    rot += step;
-                }
-                ctx.closePath(); ctx.fillStyle = currentColor + '80'; ctx.fill(); ctx.stroke();
-                saveToHistory();
-            },
-            triangle: (x, y, w, h) => { ctx.beginPath(); ctx.moveTo(x+w/2, y); ctx.lineTo(x+w, y+h); ctx.lineTo(x, y+h); ctx.closePath(); ctx.fillStyle = currentColor+'30'; ctx.fill(); ctx.stroke(); saveToHistory(); },
-            diamond: (x, y, w, h) => { ctx.beginPath(); ctx.moveTo(x+w/2, y); ctx.lineTo(x+w, y+h/2); ctx.lineTo(x+w/2, y+h); ctx.lineTo(x, y+h/2); ctx.closePath(); ctx.fillStyle = currentColor+'30'; ctx.fill(); ctx.stroke(); saveToHistory(); },
-            heart: (x, y, w, h) => {
-                const size = Math.min(w, h), cx = x + w/2 - size/2, cy = y + h/2 - size/2;
-                ctx.beginPath();
-                ctx.moveTo(cx + size/2, cy + size/4);
-                ctx.bezierCurveTo(cx + size/2, cy, cx + size, cy, cx + size, cy + size/4);
-                ctx.bezierCurveTo(cx + size, cy + size/2, cx + size/2, cy + size*0.75, cx + size/2, cy + size);
-                ctx.bezierCurveTo(cx + size/2, cy + size*0.75, cx, cy + size/2, cx, cy + size/4);
-                ctx.bezierCurveTo(cx, cy, cx + size/2, cy, cx + size/2, cy + size/4);
-                ctx.fillStyle = currentColor+'80'; ctx.fill(); ctx.stroke();
-                saveToHistory();
-            },
-            square: (x, y, w, h) => { const s = Math.min(w, h); ctx.strokeRect(x, y, s, s); saveToHistory(); },
-            oval: (x, y, w, h) => { ctx.beginPath(); ctx.ellipse(x+w/2, y+h/2, Math.abs(w)/2, Math.abs(h)/2, 0, 0, Math.PI*2); ctx.stroke(); saveToHistory(); }
+            rectangle:(x,y,w,h)=>{ctx.strokeRect(x,y,w,h); saveToHistory();},
+            circle:(x,y,w,h)=>{const r=Math.min(Math.abs(w),Math.abs(h))/2; ctx.beginPath(); ctx.arc(x+w/2,y+h/2,r,0,Math.PI*2); ctx.stroke(); saveToHistory();},
+            line:(x,y,w,h)=>{ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x+w,y+h); ctx.stroke(); saveToHistory();},
+            arrow:(x,y,w,h)=>{const toX=x+w, toY=y+h, angle=Math.atan2(toY-y,toX-x), size=20; ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(toX,toY); ctx.stroke(); ctx.beginPath(); ctx.moveTo(toX,toY); ctx.lineTo(toX-size*Math.cos(angle-Math.PI/6),toY-size*Math.sin(angle-Math.PI/6)); ctx.lineTo(toX-size*Math.cos(angle+Math.PI/6),toY-size*Math.sin(angle+Math.PI/6)); ctx.fillStyle=currentColor; ctx.fill(); saveToHistory();},
+            star:(x,y,w,h)=>{const cx=x+w/2, cy=y+h/2, outer=Math.min(w,h)/2, inner=outer/2; let rot=Math.PI/2*3, step=Math.PI/5; ctx.beginPath(); for(let i=0;i<5;i++){ ctx.lineTo(cx+Math.cos(rot)*outer, cy+Math.sin(rot)*outer); rot+=step; ctx.lineTo(cx+Math.cos(rot)*inner, cy+Math.sin(rot)*inner); rot+=step; } ctx.closePath(); ctx.fillStyle=currentColor+'80'; ctx.fill(); ctx.stroke(); saveToHistory();},
+            triangle:(x,y,w,h)=>{ctx.beginPath(); ctx.moveTo(x+w/2,y); ctx.lineTo(x+w,y+h); ctx.lineTo(x,y+h); ctx.closePath(); ctx.fillStyle=currentColor+'30'; ctx.fill(); ctx.stroke(); saveToHistory();},
+            diamond:(x,y,w,h)=>{ctx.beginPath(); ctx.moveTo(x+w/2,y); ctx.lineTo(x+w,y+h/2); ctx.lineTo(x+w/2,y+h); ctx.lineTo(x,y+h/2); ctx.closePath(); ctx.fill(); ctx.stroke(); saveToHistory();},
+            heart:(x,y,w,h)=>{const size=Math.min(w,h), cx=x+w/2-size/2, cy=y+h/2-size/2; ctx.beginPath(); ctx.moveTo(cx+size/2,cy+size/4); ctx.bezierCurveTo(cx+size/2,cy,cx+size,cy,cx+size,cy+size/4); ctx.bezierCurveTo(cx+size,cy+size/2,cx+size/2,cy+size*0.75,cx+size/2,cy+size); ctx.bezierCurveTo(cx+size/2,cy+size*0.75,cx,cy+size/2,cx,cy+size/4); ctx.bezierCurveTo(cx,cy,cx+size/2,cy,cx+size/2,cy+size/4); ctx.fillStyle=currentColor+'80'; ctx.fill(); ctx.stroke(); saveToHistory();},
+            square:(x,y,w,h)=>{const s=Math.min(w,h); ctx.strokeRect(x,y,s,s); saveToHistory();},
+            oval:(x,y,w,h)=>{ctx.beginPath(); ctx.ellipse(x+w/2,y+h/2,Math.abs(w)/2,Math.abs(h)/2,0,0,Math.PI*2); ctx.stroke(); saveToHistory();}
         };
+        const shapeList=['rectangle','circle','line','arrow','star','triangle','diamond','heart','square','oval'];
+        const shapeMenu=document.getElementById('shapeMenuContainer');
+        shapeList.forEach(shape=>{const btn=document.createElement('button'); btn.innerText=shape.charAt(0).toUpperCase()+shape.slice(1); btn.onclick=()=>{currentShape=shape; document.getElementById('shapesBtn').innerText=shape.charAt(0).toUpperCase()+shape.slice(1)+' ▼'; setTool('shape'); document.getElementById('shapeMenuContainer').classList.remove('show');}; shapeMenu.appendChild(btn);});
         
-        const shapeList = ['rectangle', 'circle', 'line', 'arrow', 'star', 'triangle', 'diamond', 'heart', 'square', 'oval'];
-        const shapeMenu = document.getElementById('shapeMenuContainer');
-        shapeList.forEach(shape => {
-            const btn = document.createElement('button');
-            btn.innerText = shape.charAt(0).toUpperCase() + shape.slice(1);
-            btn.onclick = () => { currentShape = shape; document.getElementById('shapesBtn').innerText = shape.charAt(0).toUpperCase() + shape.slice(1) + ' ▼'; setTool('shape'); document.getElementById('shapeMenuContainer').classList.remove('show'); };
-            shapeMenu.appendChild(btn);
-        });
+        function startDrawing(e){ if(currentTool==='pan') return; drawing=true; const pos=getCanvasCoords(e); startX=pos.x; startY=pos.y; lastX=pos.x; lastY=pos.y; if(currentTool==='text'){ placeTextAt(startX,startY); drawing=false; return;} if(currentTool==='erase'){ ctx.save(); ctx.globalCompositeOperation='destination-out'; ctx.beginPath(); ctx.arc(startX,startY,currentWidth,0,Math.PI*2); ctx.fill(); ctx.restore(); saveToHistory(); drawing=false; return;} if(currentTool==='shape') shapeStart={x:startX,y:startY};}
+        function drawMove(e){ if(!drawing) return; const pos=getCanvasCoords(e); if(currentTool==='pen'){ ctx.beginPath(); ctx.moveTo(lastX,lastY); ctx.lineTo(pos.x,pos.y); ctx.strokeStyle=currentColor; ctx.lineWidth=currentWidth; ctx.stroke(); lastX=pos.x; lastY=pos.y; saveToHistory(); } else if(currentTool==='highlighter'){ ctx.beginPath(); ctx.moveTo(lastX,lastY); ctx.lineTo(pos.x,pos.y); ctx.strokeStyle=currentColor; ctx.lineWidth=currentWidth*1.4; ctx.globalAlpha=0.35; ctx.stroke(); ctx.globalAlpha=1; lastX=pos.x; lastY=pos.y; saveToHistory(); }}
+        function endDrawing(e){ if(!drawing) return; const pos=getCanvasCoords(e); if(currentTool==='shape' && shapeStart && shapes[currentShape]){ ctx.strokeStyle=currentColor; ctx.fillStyle=currentColor+'30'; ctx.lineWidth=currentWidth; shapes[currentShape](startX,startY,pos.x-startX,pos.y-startY); } drawing=false; shapeStart=null;}
+        canvas.addEventListener('mousedown',startDrawing); canvas.addEventListener('mousemove',drawMove); canvas.addEventListener('mouseup',endDrawing); canvas.addEventListener('touchstart',e=>{e.preventDefault(); startDrawing(e);}); canvas.addEventListener('touchmove',e=>{e.preventDefault(); drawMove(e);}); canvas.addEventListener('touchend',endDrawing);
+        function setTool(tool){ currentTool=tool; canvas.style.cursor=(tool==='text')?'text':'crosshair'; document.querySelectorAll('.tool-btn').forEach(btn=>btn.classList.remove('active')); if(tool==='pen') document.getElementById('drawPenBtn').classList.add('active'); if(tool==='highlighter') document.getElementById('highlighterBtn').classList.add('active'); if(tool==='erase') document.getElementById('eraseBtn').classList.add('active'); if(tool==='text') document.getElementById('textToolBtn').classList.add('active'); if(tool==='pan') document.getElementById('panModeBtn').classList.add('active'); ctx.globalAlpha=1; }
+        document.getElementById('undoBtn').onclick=undo; document.getElementById('drawPenBtn').onclick=()=>setTool('pen'); document.getElementById('highlighterBtn').onclick=()=>setTool('highlighter'); document.getElementById('eraseBtn').onclick=()=>setTool('erase'); document.getElementById('textToolBtn').onclick=()=>setTool('text'); document.getElementById('panModeBtn').onclick=()=>setTool('pan'); document.getElementById('penColorPicker').onchange=e=>currentColor=e.target.value; document.getElementById('penWidthSlider').oninput=e=>currentWidth=parseInt(e.target.value); document.getElementById('clearCanvasBtn').onclick=clearFullBoard;
         
-        // Drawing events
-        function startDrawing(e) {
-            if (currentTool === 'pan') return;
-            drawing = true;
-            const pos = getCanvasCoords(e);
-            startX = pos.x; startY = pos.y; lastX = pos.x; lastY = pos.y;
-            if (currentTool === 'text') { placeTextAt(startX, startY); drawing = false; return; }
-            if (currentTool === 'erase') {
-                ctx.save(); ctx.globalCompositeOperation = 'destination-out';
-                ctx.beginPath(); ctx.arc(startX, startY, currentWidth, 0, Math.PI*2); ctx.fill(); ctx.restore();
-                saveToHistory(); drawing = false; return;
+        // Board Color Options - Horizontal (Fixed)
+        document.querySelectorAll('.board-color-option').forEach(opt=>opt.addEventListener('click',()=>setBoardColor(opt.getAttribute('data-color'))));
+        
+        document.getElementById('shapesBtn').addEventListener('click',(e)=>{e.stopPropagation(); document.getElementById('shapeMenuContainer').classList.toggle('show');});
+        document.addEventListener('click',(e)=>{if(!document.getElementById('shapeDropdown').contains(e.target)) document.getElementById('shapeMenuContainer').classList.remove('show');});
+        let isPanning=false, panStartPos={x:0,y:0}; container.addEventListener('mousedown',(e)=>{if(currentTool==='pan'){isPanning=true; panStartPos.x=e.clientX-panX; panStartPos.y=e.clientY-panY; container.style.cursor='grabbing';}}); window.addEventListener('mousemove',(e)=>{if(isPanning && currentTool==='pan'){panX=e.clientX-panStartPos.x; panY=e.clientY-panStartPos.y; updateTransform();}}); window.addEventListener('mouseup',()=>{isPanning=false; container.style.cursor='grab';});
+        document.getElementById('zoomInBtn').onclick=()=>{scale=Math.min(scale+0.1,3); updateTransform();}; document.getElementById('zoomOutBtn').onclick=()=>{scale=Math.max(scale-0.1,0.3); updateTransform();}; document.getElementById('resetViewBtn').onclick=()=>{scale=1; panX=0; panY=0; updateTransform();};
+        
+        // Google Slides Fullscreen
+        document.getElementById('loadGoogleSlidesBtn').onclick=()=>{ let url=document.getElementById('googleSlidesUrl').value.trim(); if(!url){ alert("Paste Google Slides embed URL"); return; } if(url.includes('/d/') && !url.includes('embed')){ const match=url.match(/\/d\/([a-zA-Z0-9_-]+)/); if(match) url=`https://docs.google.com/presentation/d/${match[1]}/embed`; } document.getElementById('slidesPreviewContainer').innerHTML=`<iframe src="${url}" allowfullscreen></iframe>`; };
+        
+        // PDF Annotation System
+        let pdfModal=null;
+        function openPDFViewer(dataURL, fileName){
+            if(pdfModal) pdfModal.remove();
+            pdfModal=document.createElement('div');
+            pdfModal.className='pdf-modal';
+            let annotationMode='laser'; let annotationColor='#ff0000'; let annotationWidth=3;
+            let annotationCtx=null, annotationDrawing=false, annotationLastX=0, annotationLastY=0;
+            pdfModal.innerHTML=`
+                <div class="pdf-toolbar">
+                    <button class="pdf-tool-btn laser" data-mode="laser">🔴 Laser Pointer</button>
+                    <button class="pdf-tool-btn" data-mode="highlighter">🟡 Highlighter</button>
+                    <button class="pdf-tool-btn" data-mode="pen">✏️ Pen</button>
+                    <button class="pdf-tool-btn" data-mode="text">📝 Text</button>
+                    <input type="color" id="pdfColorPicker" value="#ff0000" style="width:30px;height:30px;border-radius:4px;">
+                    <input type="range" id="pdfWidthSlider" min="1" max="20" value="3" style="width:80px;">
+                    <button id="clearAnnotationBtn" class="pdf-tool-btn">🗑️ Clear</button>
+                    <button class="pdf-tool-btn pdf-close-btn">✖ Close</button>
+                </div>
+                <div class="pdf-content-area">
+                    <div class="pdf-page-container">
+                        <div class="pdf-canvas-layer">
+                            <img id="pdfCanvas" src="${dataURL}" style="max-width:100%; max-height:calc(100vh - 70px); object-fit:contain;">
+                            <canvas id="annotationCanvas" class="annotation-canvas" style="position:absolute; top:0; left:0; width:100%; height:100%;"></canvas>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(pdfModal);
+            
+            const pdfImg=pdfModal.querySelector('#pdfCanvas');
+            const annotCanvas=pdfModal.querySelector('#annotationCanvas');
+            annotationCtx=annotCanvas.getContext('2d');
+            
+            function resizeAnnotationCanvas(){
+                const rect=pdfImg.getBoundingClientRect();
+                annotCanvas.width=rect.width;
+                annotCanvas.height=rect.height;
+                annotCanvas.style.width=rect.width+'px';
+                annotCanvas.style.height=rect.height+'px';
+                annotationCtx.clearRect(0,0,annotCanvas.width,annotCanvas.height);
+                annotationCtx.strokeStyle=annotationColor;
+                annotationCtx.fillStyle=annotationColor;
+                annotationCtx.lineWidth=annotationWidth;
+                annotationCtx.lineCap='round';
             }
-            if (currentTool === 'shape') shapeStart = { x: startX, y: startY };
-        }
-        function drawMove(e) {
-            if (!drawing) return;
-            const pos = getCanvasCoords(e);
-            if (currentTool === 'pen') {
-                ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(pos.x, pos.y);
-                ctx.strokeStyle = currentColor; ctx.lineWidth = currentWidth; ctx.stroke();
-                lastX = pos.x; lastY = pos.y; saveToHistory();
-            } else if (currentTool === 'highlighter') {
-                ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(pos.x, pos.y);
-                ctx.strokeStyle = currentColor; ctx.lineWidth = currentWidth * 1.4; ctx.globalAlpha = 0.35; ctx.stroke(); ctx.globalAlpha = 1;
-                lastX = pos.x; lastY = pos.y; saveToHistory();
+            pdfImg.onload=resizeAnnotationCanvas;
+            setTimeout(resizeAnnotationCanvas,100);
+            window.addEventListener('resize',resizeAnnotationCanvas);
+            
+            function getAnnotCoords(e){
+                const rect=annotCanvas.getBoundingClientRect();
+                let cx,cy;
+                if(e.touches){ cx=e.touches[0].clientX; cy=e.touches[0].clientY; }
+                else { cx=e.clientX; cy=e.clientY; }
+                let x=cx-rect.left, y=cy-rect.top;
+                x=Math.min(Math.max(0,x),annotCanvas.width);
+                y=Math.min(Math.max(0,y),annotCanvas.height);
+                return {x,y};
             }
-        }
-        function endDrawing(e) {
-            if (!drawing) return;
-            const pos = getCanvasCoords(e);
-            if (currentTool === 'shape' && shapeStart && shapes[currentShape]) {
-                ctx.strokeStyle = currentColor; ctx.fillStyle = currentColor + '30'; ctx.lineWidth = currentWidth;
-                shapes[currentShape](startX, startY, pos.x - startX, pos.y - startY);
-            }
-            drawing = false; shapeStart = null;
-        }
-        
-        canvas.addEventListener('mousedown', startDrawing);
-        canvas.addEventListener('mousemove', drawMove);
-        canvas.addEventListener('mouseup', endDrawing);
-        canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDrawing(e); });
-        canvas.addEventListener('touchmove', (e) => { e.preventDefault(); drawMove(e); });
-        canvas.addEventListener('touchend', endDrawing);
-        
-        function setTool(tool) {
-            currentTool = tool;
-            canvas.style.cursor = (tool === 'text') ? 'text' : 'crosshair';
-            document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
-            if (tool === 'pen') document.getElementById('drawPenBtn').classList.add('active');
-            if (tool === 'highlighter') document.getElementById('highlighterBtn').classList.add('active');
-            if (tool === 'erase') document.getElementById('eraseBtn').classList.add('active');
-            if (tool === 'text') document.getElementById('textToolBtn').classList.add('active');
-            if (tool === 'pan') document.getElementById('panModeBtn').classList.add('active');
-            ctx.globalAlpha = 1;
-        }
-        
-        // UI Bindings
-        document.getElementById('undoBtn').onclick = undo;
-        document.getElementById('drawPenBtn').onclick = () => setTool('pen');
-        document.getElementById('highlighterBtn').onclick = () => setTool('highlighter');
-        document.getElementById('eraseBtn').onclick = () => setTool('erase');
-        document.getElementById('textToolBtn').onclick = () => setTool('text');
-        document.getElementById('panModeBtn').onclick = () => setTool('pan');
-        document.getElementById('penColorPicker').onchange = (e) => currentColor = e.target.value;
-        document.getElementById('penWidthSlider').oninput = (e) => currentWidth = parseInt(e.target.value);
-        document.getElementById('clearCanvasBtn').onclick = clearFullBoard;
-        document.querySelectorAll('.board-color-option').forEach(opt => opt.addEventListener('click', () => setBoardColor(opt.getAttribute('data-color'))));
-        
-        // Shapes menu toggle
-        document.getElementById('shapesBtn').addEventListener('click', (e) => { e.stopPropagation(); document.getElementById('shapeMenuContainer').classList.toggle('show'); });
-        document.addEventListener('click', (e) => { if (!document.getElementById('shapeDropdown').contains(e.target)) document.getElementById('shapeMenuContainer').classList.remove('show'); });
-        
-        // Pan & Zoom
-        let isPanning = false, panStartPos = { x: 0, y: 0 };
-        container.addEventListener('mousedown', (e) => { if (currentTool === 'pan') { isPanning = true; panStartPos.x = e.clientX - panX; panStartPos.y = e.clientY - panY; container.style.cursor = 'grabbing'; } });
-        window.addEventListener('mousemove', (e) => { if (isPanning && currentTool === 'pan') { panX = e.clientX - panStartPos.x; panY = e.clientY - panStartPos.y; updateTransform(); } });
-        window.addEventListener('mouseup', () => { isPanning = false; container.style.cursor = 'grab'; });
-        document.getElementById('zoomInBtn').onclick = () => { scale = Math.min(scale + 0.1, 3); updateTransform(); };
-        document.getElementById('zoomOutBtn').onclick = () => { scale = Math.max(scale - 0.1, 0.3); updateTransform(); };
-        document.getElementById('resetViewBtn').onclick = () => { scale = 1; panX = 0; panY = 0; updateTransform(); };
-        
-        // ========== GOOGLE SLIDES ==========
-        const slidesPreview = document.getElementById('slidesPreviewContainer');
-        document.getElementById('loadGoogleSlidesBtn').onclick = () => {
-            let url = document.getElementById('googleSlidesUrl').value.trim();
-            if (!url) { alert("Please paste a Google Slides embed URL"); return; }
-            if (url.includes('/d/') && !url.includes('embed')) {
-                const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-                if (match) url = `https://docs.google.com/presentation/d/${match[1]}/embed`;
-            }
-            slidesPreview.innerHTML = `<iframe src="${url}" allowfullscreen></iframe>`;
-        };
-        
-        // ========== LIBRARY: PDF + Images ==========
-        let libraryItems = [];
-        const libraryGrid = document.getElementById('libraryItemsGrid');
-        let currentModal = null;
-        
-        function closeModal() { if (currentModal) { currentModal.remove(); currentModal = null; } }
-        
-        function showFileViewer(item) {
-            closeModal();
-            const modal = document.createElement('div');
-            modal.className = 'modal-overlay';
-            modal.onclick = (e) => { if (e.target === modal) closeModal(); };
-            const modalContent = document.createElement('div');
-            modalContent.className = 'modal-content';
-            const header = document.createElement('div');
-            header.className = 'modal-header';
-            header.innerHTML = `<h4>${item.name}</h4><button class="modal-close">Close</button>`;
-            header.querySelector('.modal-close').onclick = closeModal;
-            const body = document.createElement('div');
-            body.className = 'modal-body';
-            if (item.type === 'pdf') {
-                const iframe = document.createElement('iframe');
-                iframe.className = 'pdf-embed';
-                iframe.src = item.dataURL;
-                body.appendChild(iframe);
-            } else {
-                const img = document.createElement('img');
-                img.src = item.dataURL;
-                img.className = 'image-preview';
-                body.appendChild(img);
-                const addBtn = document.createElement('button');
-                addBtn.innerText = 'Add to Whiteboard';
-                addBtn.className = 'add-to-board-btn';
-                addBtn.onclick = () => {
-                    const fullImg = new Image();
-                    fullImg.onload = () => {
-                        const bg = localStorage.getItem('boardBgColor') || '#ffffff';
-                        ctx.fillStyle = bg;
-                        ctx.fillRect(0, 0, canvas.width, canvas.height);
-                        let w = canvas.width, h = canvas.height;
-                        const ratio = fullImg.width / fullImg.height;
-                        if (ratio > canvas.width / canvas.height) { w = canvas.width; h = w / ratio; }
-                        else { h = canvas.height; w = h * ratio; }
-                        ctx.drawImage(fullImg, (canvas.width - w) / 2, (canvas.height - h) / 2, w, h);
-                        saveToHistory();
-                        document.querySelector('.tab[data-tab="whiteboard"]').click();
-                        closeModal();
-                    };
-                    fullImg.src = item.dataURL;
-                };
-                body.appendChild(addBtn);
-            }
-            modalContent.appendChild(header);
-            modalContent.appendChild(body);
-            modal.appendChild(modalContent);
-            document.body.appendChild(modal);
-            currentModal = modal;
-        }
-        
-        function renderLibrary() {
-            if (libraryItems.length === 0) {
-                libraryGrid.innerHTML = '<div style="color:#7e8aa8; width:100%; text-align:center;">No files. Add PDF, JPG or PNG files above. Click any file to view.</div>';
-                return;
-            }
-            libraryGrid.innerHTML = '';
-            libraryItems.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'library-item';
-                if (item.type === 'pdf') {
-                    const iconDiv = document.createElement('div');
-                    iconDiv.className = 'pdf-icon';
-                    iconDiv.innerText = 'PDF';
-                    card.appendChild(iconDiv);
-                } else {
-                    const img = document.createElement('img');
-                    img.src = item.dataURL;
-                    card.appendChild(img);
+            function startAnnot(e){
+                annotationDrawing=true;
+                const pos=getAnnotCoords(e);
+                annotationLastX=pos.x; annotationLastY=pos.y;
+                if(annotationMode==='text'){
+                    const text=prompt("Enter text:"); if(text){ annotationCtx.font=`bold ${annotationWidth*4}px -apple-system`; annotationCtx.fillStyle=annotationColor; annotationCtx.fillText(text,pos.x,pos.y); }
+                    annotationDrawing=false;
+                    return;
                 }
-                const nameSpan = document.createElement('div');
-                nameSpan.className = 'item-name';
-                nameSpan.innerText = item.name.length > 25 ? item.name.slice(0,22)+'...' : item.name;
-                card.appendChild(nameSpan);
-                card.onclick = () => showFileViewer(item);
+                if(annotationMode==='pen' || annotationMode==='highlighter' || annotationMode==='laser'){
+                    annotationCtx.beginPath();
+                    annotationCtx.moveTo(annotationLastX,annotationLastY);
+                    annotationCtx.lineTo(annotationLastX+0.5,annotationLastY+0.5);
+                    annotationCtx.stroke();
+                }
+                e.preventDefault();
+            }
+            function drawAnnot(e){
+                if(!annotationDrawing) return;
+                const pos=getAnnotCoords(e);
+                if(annotationMode==='laser'){
+                    annotationCtx.beginPath();
+                    annotationCtx.moveTo(annotationLastX,annotationLastY);
+                    annotationCtx.lineTo(pos.x,pos.y);
+                    annotationCtx.strokeStyle='#ff0000';
+                    annotationCtx.lineWidth=4;
+                    annotationCtx.stroke();
+                    annotationLastX=pos.x; annotationLastY=pos.y;
+                } else if(annotationMode==='pen'){
+                    annotationCtx.beginPath();
+                    annotationCtx.moveTo(annotationLastX,annotationLastY);
+                    annotationCtx.lineTo(pos.x,pos.y);
+                    annotationCtx.strokeStyle=annotationColor;
+                    annotationCtx.lineWidth=annotationWidth;
+                    annotationCtx.stroke();
+                    annotationLastX=pos.x; annotationLastY=pos.y;
+                } else if(annotationMode==='highlighter'){
+                    annotationCtx.beginPath();
+                    annotationCtx.moveTo(annotationLastX,annotationLastY);
+                    annotationCtx.lineTo(pos.x,pos.y);
+                    annotationCtx.strokeStyle=annotationColor;
+                    annotationCtx.lineWidth=annotationWidth*2;
+                    annotationCtx.globalAlpha=0.4;
+                    annotationCtx.stroke();
+                    annotationCtx.globalAlpha=1;
+                    annotationLastX=pos.x; annotationLastY=pos.y;
+                }
+                e.preventDefault();
+            }
+            function endAnnot(){ annotationDrawing=false; }
+            annotCanvas.addEventListener('mousedown',startAnnot);
+            annotCanvas.addEventListener('mousemove',drawAnnot);
+            annotCanvas.addEventListener('mouseup',endAnnot);
+            annotCanvas.addEventListener('touchstart',(e)=>{e.preventDefault(); startAnnot(e);});
+            annotCanvas.addEventListener('touchmove',(e)=>{e.preventDefault(); drawAnnot(e);});
+            annotCanvas.addEventListener('touchend',endAnnot);
+            
+            pdfModal.querySelectorAll('.pdf-tool-btn[data-mode]').forEach(btn=>{
+                btn.addEventListener('click',()=>{
+                    annotationMode=btn.getAttribute('data-mode');
+                    pdfModal.querySelectorAll('.pdf-tool-btn').forEach(b=>b.classList.remove('active'));
+                    btn.classList.add('active');
+                    if(annotationMode==='laser') annotationColor='#ff0000';
+                    else annotationColor=document.getElementById('pdfColorPicker').value;
+                });
+            });
+            document.getElementById('pdfColorPicker').addEventListener('change',(e)=>annotationColor=e.target.value);
+            document.getElementById('pdfWidthSlider').addEventListener('input',(e)=>annotationWidth=parseInt(e.target.value));
+            document.getElementById('clearAnnotationBtn').addEventListener('click',()=>{annotationCtx.clearRect(0,0,annotCanvas.width,annotCanvas.height);});
+            pdfModal.querySelector('.pdf-close-btn').addEventListener('click',()=>{pdfModal.remove(); pdfModal=null;});
+            document.querySelector('.pdf-tool-btn[data-mode="laser"]').classList.add('active');
+        }
+        
+        // Library Management
+        let libraryItems=[];
+        const libraryGrid=document.getElementById('libraryItemsGrid');
+        function renderLibrary(){
+            if(libraryItems.length===0){ libraryGrid.innerHTML='<div style="color:#7e8aa8; text-align:center;">No files. Add PDF or images above. Click to open in fullscreen with annotation tools.</div>'; return; }
+            libraryGrid.innerHTML='';
+            libraryItems.forEach(item=>{
+                const card=document.createElement('div'); card.className='library-item';
+                if(item.type==='pdf'){ const icon=document.createElement('div'); icon.className='pdf-icon'; icon.innerText='PDF'; card.appendChild(icon); }
+                else{ const img=document.createElement('img'); img.src=item.dataURL; card.appendChild(img); }
+                const nameSpan=document.createElement('div'); nameSpan.className='item-name'; nameSpan.innerText=item.name.length>25?item.name.slice(0,22)+'...':item.name; card.appendChild(nameSpan);
+                card.onclick=()=>{ openPDFViewer(item.dataURL, item.name); };
                 libraryGrid.appendChild(card);
             });
         }
+        function addImageToLibrary(file){ const reader=new FileReader(); reader.onload=e=>{ libraryItems.push({id:Date.now()+Math.random(), type:'image', dataURL:e.target.result, name:file.name}); renderLibrary(); }; reader.readAsDataURL(file); }
+        function addPdfToLibrary(file){ const reader=new FileReader(); reader.onload=e=>{ libraryItems.push({id:Date.now()+Math.random(), type:'pdf', dataURL:e.target.result, name:file.name}); renderLibrary(); }; reader.readAsDataURL(file); }
+        document.getElementById('imageUploadInput').addEventListener('change',e=>{ Array.from(e.target.files).forEach(f=>addImageToLibrary(f)); e.target.value=''; });
+        document.getElementById('pdfUploadInput').addEventListener('change',e=>{ Array.from(e.target.files).forEach(f=>addPdfToLibrary(f)); e.target.value=''; });
+        document.getElementById('clearLibraryBtn').onclick=()=>{libraryItems=[]; renderLibrary();};
         
-        function addImageToLibrary(file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                libraryItems.push({ id: Date.now() + Math.random(), type: 'image', dataURL: e.target.result, name: file.name });
-                renderLibrary();
-            };
-            reader.readAsDataURL(file);
-        }
-        
-        function addPdfToLibrary(file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                libraryItems.push({ id: Date.now() + Math.random(), type: 'pdf', dataURL: e.target.result, name: file.name });
-                renderLibrary();
-            };
-            reader.readAsDataURL(file);
-        }
-        
-        document.getElementById('imageUploadInput').addEventListener('change', (e) => {
-            Array.from(e.target.files).forEach(f => addImageToLibrary(f));
-            e.target.value = '';
-        });
-        document.getElementById('pdfUploadInput').addEventListener('change', (e) => {
-            Array.from(e.target.files).forEach(f => addPdfToLibrary(f));
-            e.target.value = '';
-        });
-        document.getElementById('clearLibraryBtn').onclick = () => { libraryItems = []; renderLibrary(); };
-        
-        // ========== IMAGE SEARCH ==========
-        const searchBtn = document.getElementById('searchGoogleBtn');
-        const searchInput = document.getElementById('googleSearchInput');
-        let resultsPopup = null;
-        
-        async function searchGoogleImages(query) {
-            if (!query.trim()) return;
-            if (resultsPopup) resultsPopup.remove();
-            resultsPopup = document.createElement('div');
-            resultsPopup.className = 'search-results-popup';
-            resultsPopup.innerHTML = '<div style="color:#cbd5e6;">Searching images...</div>';
-            document.body.appendChild(resultsPopup);
-            const imageUrls = [];
-            for(let i=0;i<10;i++) imageUrls.push(`https://source.unsplash.com/featured/300x200?${encodeURIComponent(query)}&sig=${Date.now()}+${i}`);
-            resultsPopup.innerHTML = '<div style="color:#cbd5e6; margin-bottom:8px;">Click an image:</div>';
-            for(let url of imageUrls) {
-                const resultDiv = document.createElement('div');
-                resultDiv.className = 'search-result-item';
-                const img = document.createElement('img'); img.src = url;
-                const btnDiv = document.createElement('div'); btnDiv.className = 'result-buttons';
-                const showBtn = document.createElement('button'); showBtn.innerText = 'Show on Board'; showBtn.className = 'small-action';
-                const saveBtn = document.createElement('button'); saveBtn.innerText = 'Save to Library'; saveBtn.className = 'small-action';
-                showBtn.onclick = () => {
-                    const fullImg = new Image();
-                    fullImg.onload = () => {
-                        const bg = localStorage.getItem('boardBgColor') || '#ffffff';
-                        ctx.fillStyle = bg; ctx.fillRect(0,0,canvas.width,canvas.height);
-                        let w = canvas.width, h = canvas.height, ratio = fullImg.width/fullImg.height;
-                        if(ratio > canvas.width/canvas.height) { w = canvas.width; h = w/ratio; }
-                        else { h = canvas.height; w = h*ratio; }
-                        ctx.drawImage(fullImg, (canvas.width-w)/2, (canvas.height-h)/2, w, h);
-                        saveToHistory();
-                        document.querySelector('.tab[data-tab="whiteboard"]').click();
-                        if(resultsPopup) resultsPopup.remove();
-                    };
-                    fullImg.src = url;
-                };
-                saveBtn.onclick = () => {
-                    const saveImg = new Image();
-                    saveImg.crossOrigin = "Anonymous";
-                    saveImg.onload = () => {
-                        const tempCanvas = document.createElement('canvas');
-                        tempCanvas.width = saveImg.width; tempCanvas.height = saveImg.height;
-                        tempCanvas.getContext('2d').drawImage(saveImg,0,0);
-                        libraryItems.push({ id: Date.now(), type: 'image', dataURL: tempCanvas.toDataURL(), name: query + ' image' });
-                        renderLibrary();
-                        alert("Image saved to library");
-                        if(resultsPopup) resultsPopup.remove();
-                    };
-                    saveImg.src = url;
-                };
-                btnDiv.appendChild(showBtn); btnDiv.appendChild(saveBtn);
-                resultDiv.appendChild(img); resultDiv.appendChild(btnDiv);
-                resultsPopup.appendChild(resultDiv);
+        // Image Search
+        const searchBtn=document.getElementById('searchGoogleBtn'), searchInput=document.getElementById('googleSearchInput');
+        let resultsPopup=null;
+        async function searchGoogleImages(query){
+            if(!query.trim()) return;
+            if(resultsPopup) resultsPopup.remove();
+            resultsPopup=document.createElement('div'); resultsPopup.className='search-results-popup'; resultsPopup.innerHTML='<div style="color:#cbd5e6;">Searching...</div>'; document.body.appendChild(resultsPopup);
+            const urls=[]; for(let i=0;i<10;i++) urls.push(`https://source.unsplash.com/featured/300x200?${encodeURIComponent(query)}&sig=${Date.now()}+${i}`);
+            resultsPopup.innerHTML='<div style="color:#cbd5e6; margin-bottom:8px;">Click image:</div>';
+            for(let url of urls){
+                const div=document.createElement('div'); div.className='search-result-item';
+                const img=document.createElement('img'); img.src=url;
+                const btns=document.createElement('div'); btns.className='result-buttons';
+                const showBtn=document.createElement('button'); showBtn.innerText='Show on Board'; showBtn.className='small-action';
+                const saveBtn=document.createElement('button'); saveBtn.innerText='Save to Library'; saveBtn.className='small-action';
+                showBtn.onclick=()=>{ const fullImg=new Image(); fullImg.onload=()=>{ const bg=localStorage.getItem('boardBgColor')||'#ffffff'; ctx.fillStyle=bg; ctx.fillRect(0,0,canvas.width,canvas.height); let w=canvas.width,h=canvas.height,ratio=fullImg.width/fullImg.height; if(ratio>canvas.width/canvas.height){w=canvas.width; h=w/ratio;}else{h=canvas.height; w=h*ratio;} ctx.drawImage(fullImg,(canvas.width-w)/2,(canvas.height-h)/2,w,h); saveToHistory(); document.querySelector('.tab[data-tab="whiteboard"]').click(); resultsPopup.remove();}; fullImg.src=url; };
+                saveBtn.onclick=()=>{ const saveImg=new Image(); saveImg.crossOrigin="Anonymous"; saveImg.onload=()=>{ const tempCanvas=document.createElement('canvas'); tempCanvas.width=saveImg.width; tempCanvas.height=saveImg.height; tempCanvas.getContext('2d').drawImage(saveImg,0,0); libraryItems.push({id:Date.now(), type:'image', dataURL:tempCanvas.toDataURL(), name:query+' image'}); renderLibrary(); alert("Saved to library"); resultsPopup.remove();}; saveImg.src=url; };
+                btns.appendChild(showBtn); btns.appendChild(saveBtn); div.appendChild(img); div.appendChild(btns); resultsPopup.appendChild(div);
             }
         }
+        searchBtn.onclick=()=>searchGoogleImages(searchInput.value);
+        searchInput.addEventListener('keypress',e=>{if(e.key==='Enter') searchGoogleImages(searchInput.value);});
+        document.getElementById('toggleSearchBtn').onclick=()=>{if(resultsPopup) resultsPopup.remove();};
         
-        searchBtn.onclick = () => searchGoogleImages(searchInput.value);
-        searchInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') searchGoogleImages(searchInput.value); });
-        document.getElementById('toggleSearchBtn').onclick = () => { if(resultsPopup) resultsPopup.remove(); };
+        document.querySelectorAll('.tab').forEach(tab=>{ tab.onclick=()=>{ document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); tab.classList.add('active'); document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active')); document.getElementById(tab.getAttribute('data-tab')+'Panel').classList.add('active'); }; });
         
-        // Tab switching
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.onclick = () => {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-                document.getElementById(tab.getAttribute('data-tab') + 'Panel').classList.add('active');
-            };
-        });
-        
-        // Initialize
-        const initialBg = localStorage.getItem('boardBgColor') || '#ffffff';
-        ctx.fillStyle = initialBg; ctx.fillRect(0, 0, canvas.width, canvas.height);
-        saveToHistory();
-        renderLibrary();
-        setTool('pen');
-        updateTransform();
+        clearFullBoard(); renderLibrary(); setTool('pen'); updateTransform();
     })();
 </script>
 </body>

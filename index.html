@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Teaching Whiteboard | PDF + Images Library</title>
+    <title>Teaching Whiteboard | Slides + PDF + Images</title>
     <style>
         * {
             margin: 0;
@@ -138,6 +138,7 @@
             height: 100%;
             display: none;
             background: #0f121c;
+            overflow-y: auto;
         }
 
         .panel.active {
@@ -175,7 +176,66 @@
             cursor: crosshair;
         }
 
-        /* Library Panel - Clean design for PDF and Images */
+        /* Google Slides Panel */
+        .slides-container {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            height: 100%;
+        }
+
+        .google-slides-section {
+            background: #1a2133;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .section-title {
+            color: #cbd5e6;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 12px;
+            border-left: 3px solid #4a6fa5;
+            padding-left: 10px;
+        }
+
+        .embed-input-area {
+            display: flex;
+            gap: 12px;
+            margin: 12px 0;
+            flex-wrap: wrap;
+        }
+
+        #googleSlidesUrl {
+            flex: 1;
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid #2d3548;
+            background: #0f121c;
+            color: #e2e8f0;
+            outline: none;
+            font-size: 0.85rem;
+            font-family: inherit;
+        }
+
+        .slides-preview {
+            margin-top: 15px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #0a0d16;
+            min-height: 450px;
+            position: relative;
+        }
+
+        .slides-preview iframe {
+            width: 100%;
+            height: 500px;
+            border: none;
+            border-radius: 8px;
+        }
+
+        /* Library Panel */
         .library-container {
             padding: 20px;
             display: flex;
@@ -189,15 +249,6 @@
             background: #1a2133;
             border-radius: 12px;
             padding: 16px;
-        }
-
-        .upload-title {
-            color: #cbd5e6;
-            font-size: 0.9rem;
-            font-weight: 500;
-            margin-bottom: 12px;
-            border-left: 3px solid #4a6fa5;
-            padding-left: 10px;
         }
 
         .upload-area {
@@ -278,7 +329,7 @@
             word-break: break-all;
         }
 
-        /* PDF Viewer Modal */
+        /* Modal for PDF/Image Viewer */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -331,6 +382,9 @@
             flex: 1;
             overflow: auto;
             padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .pdf-embed {
             width: 100%;
@@ -341,7 +395,7 @@
         }
         .image-preview {
             max-width: 100%;
-            max-height: 100%;
+            max-height: 80%;
             display: block;
             margin: 0 auto;
             border-radius: 8px;
@@ -350,19 +404,19 @@
             background: #4a6fa5;
             border: none;
             color: white;
-            padding: 6px 16px;
-            border-radius: 20px;
+            padding: 8px 24px;
+            border-radius: 30px;
             cursor: pointer;
-            font-size: 0.75rem;
-            margin-top: 12px;
-            align-self: center;
+            font-size: 0.8rem;
+            margin-top: 16px;
+            font-weight: 500;
         }
 
+        /* Shape dropdown */
         .shape-dropdown {
             position: relative;
             display: inline-block;
         }
-
         .shape-menu {
             display: none;
             position: absolute;
@@ -378,11 +432,9 @@
             border: 1px solid #4a6fa5;
             box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         }
-
         .shape-menu.show {
             display: flex;
         }
-
         .shape-menu button {
             background: #2a3348;
             border: none;
@@ -392,7 +444,6 @@
             cursor: pointer;
             font-size: 0.7rem;
         }
-
         .shape-menu button:hover {
             background: #4a6fa5;
         }
@@ -402,13 +453,13 @@
             border-radius: 8px;
             padding: 2px 6px;
         }
-
         .bg-color-palette {
             display: flex;
             gap: 6px;
             margin-left: 6px;
         }
-        
+
+        /* Search overlay */
         .search-overlay {
             position: fixed;
             bottom: 20px;
@@ -420,13 +471,11 @@
             padding: 8px 16px;
             border: 1px solid #4a6fa5;
         }
-
         .search-input-area {
             display: flex;
             gap: 8px;
             align-items: center;
         }
-
         #googleSearchInput {
             padding: 8px 14px;
             border-radius: 40px;
@@ -438,7 +487,6 @@
             font-size: 0.8rem;
             font-family: inherit;
         }
-
         .search-results-popup {
             position: fixed;
             bottom: 85px;
@@ -453,7 +501,6 @@
             border: 1px solid #4a6fa5;
             z-index: 1001;
         }
-
         .search-result-item {
             display: flex;
             gap: 12px;
@@ -462,21 +509,18 @@
             border-radius: 12px;
             padding: 8px;
         }
-
         .search-result-item img {
             width: 60px;
             height: 60px;
             object-fit: cover;
             border-radius: 8px;
         }
-
         .result-buttons {
             display: flex;
             gap: 8px;
             margin-left: auto;
             align-items: center;
         }
-
         .small-action {
             background: #4a6fa5;
             border: none;
@@ -530,10 +574,12 @@
 
     <div class="tab-bar">
         <div class="tab active" data-tab="whiteboard">Whiteboard</div>
-        <div class="tab" data-tab="library">Library (PDF / Images)</div>
+        <div class="tab" data-tab="slides">Google Slides</div>
+        <div class="tab" data-tab="library">Library (PDF/Images)</div>
     </div>
 
     <div class="main-area">
+        <!-- Whiteboard Panel -->
         <div id="whiteboardPanel" class="panel active">
             <div id="whiteboardContainer" style="width:100%; height:100%; overflow:auto; background:#8c99ac;">
                 <div class="infinite-canvas" id="infiniteCanvasWrapper">
@@ -542,10 +588,28 @@
             </div>
         </div>
 
+        <!-- Google Slides Panel -->
+        <div id="slidesPanel" class="panel">
+            <div class="slides-container">
+                <div class="google-slides-section">
+                    <div class="section-title">Google Slides Presentation</div>
+                    <p style="color:#7e8aa8; font-size:0.7rem; margin-bottom:8px;">Paste embed link from File → Share → Publish to web → Embed</p>
+                    <div class="embed-input-area">
+                        <input type="text" id="googleSlidesUrl" placeholder="https://docs.google.com/presentation/d/.../embed">
+                        <button id="loadGoogleSlidesBtn" class="tool-btn">Load Presentation</button>
+                    </div>
+                    <div id="slidesPreviewContainer" class="slides-preview">
+                        <div style="color:#7e8aa8; padding:40px; text-align:center;">No slides loaded. Paste a Google Slides embed link above.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Library Panel (PDF + Images) -->
         <div id="libraryPanel" class="panel">
             <div class="library-container">
                 <div class="upload-section">
-                    <div class="upload-title">Upload PDF, JPG or PNG</div>
+                    <div class="section-title">Upload PDF, JPG or PNG</div>
                     <div class="upload-area">
                         <label class="file-input-wrapper">
                             📄 Add PDF
@@ -565,6 +629,7 @@
         </div>
     </div>
 
+    <!-- Search Overlay for Online Images -->
     <div class="search-overlay" id="searchOverlay">
         <div class="search-input-area">
             <input type="text" id="googleSearchInput" placeholder="Search online images">
@@ -797,37 +862,38 @@
         document.getElementById('zoomOutBtn').onclick = () => { scale = Math.max(scale - 0.1, 0.3); updateTransform(); };
         document.getElementById('resetViewBtn').onclick = () => { scale = 1; panX = 0; panY = 0; updateTransform(); };
         
-        // ========== LIBRARY: PDF + Images with Preview ==========
+        // ========== GOOGLE SLIDES ==========
+        const slidesPreview = document.getElementById('slidesPreviewContainer');
+        document.getElementById('loadGoogleSlidesBtn').onclick = () => {
+            let url = document.getElementById('googleSlidesUrl').value.trim();
+            if (!url) { alert("Please paste a Google Slides embed URL"); return; }
+            if (url.includes('/d/') && !url.includes('embed')) {
+                const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                if (match) url = `https://docs.google.com/presentation/d/${match[1]}/embed`;
+            }
+            slidesPreview.innerHTML = `<iframe src="${url}" allowfullscreen></iframe>`;
+        };
+        
+        // ========== LIBRARY: PDF + Images ==========
         let libraryItems = [];
         const libraryGrid = document.getElementById('libraryItemsGrid');
-        
-        // Modal for viewing files
         let currentModal = null;
         
-        function closeModal() {
-            if (currentModal) {
-                currentModal.remove();
-                currentModal = null;
-            }
-        }
+        function closeModal() { if (currentModal) { currentModal.remove(); currentModal = null; } }
         
         function showFileViewer(item) {
             closeModal();
             const modal = document.createElement('div');
             modal.className = 'modal-overlay';
             modal.onclick = (e) => { if (e.target === modal) closeModal(); };
-            
             const modalContent = document.createElement('div');
             modalContent.className = 'modal-content';
-            
             const header = document.createElement('div');
             header.className = 'modal-header';
             header.innerHTML = `<h4>${item.name}</h4><button class="modal-close">Close</button>`;
             header.querySelector('.modal-close').onclick = closeModal;
-            
             const body = document.createElement('div');
             body.className = 'modal-body';
-            
             if (item.type === 'pdf') {
                 const iframe = document.createElement('iframe');
                 iframe.className = 'pdf-embed';
@@ -838,7 +904,6 @@
                 img.src = item.dataURL;
                 img.className = 'image-preview';
                 body.appendChild(img);
-                
                 const addBtn = document.createElement('button');
                 addBtn.innerText = 'Add to Whiteboard';
                 addBtn.className = 'add-to-board-btn';
@@ -861,7 +926,6 @@
                 };
                 body.appendChild(addBtn);
             }
-            
             modalContent.appendChild(header);
             modalContent.appendChild(body);
             modal.appendChild(modalContent);
@@ -925,7 +989,7 @@
         });
         document.getElementById('clearLibraryBtn').onclick = () => { libraryItems = []; renderLibrary(); };
         
-        // Image Search
+        // ========== IMAGE SEARCH ==========
         const searchBtn = document.getElementById('searchGoogleBtn');
         const searchInput = document.getElementById('googleSearchInput');
         let resultsPopup = null;

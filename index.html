@@ -79,7 +79,7 @@
             background: #e34234;
         }
 
-        /* Horizontal board color options - FIXED */
+        /* Horizontal board color options */
         .board-color-row {
             display: flex;
             flex-direction: row;
@@ -314,7 +314,7 @@
             margin-top: 6px;
         }
 
-        /* Full Screen PDF Viewer with Annotation Tools */
+        /* Full Screen PDF Viewer */
         .pdf-modal {
             position: fixed;
             top: 0;
@@ -396,6 +396,7 @@
             margin-left: auto;
         }
 
+        /* SHAPES MENU - HORIZONTAL SINGLE LINE (FIXED) */
         .shape-dropdown {
             position: relative;
             display: inline-block;
@@ -404,27 +405,36 @@
             display: none;
             position: absolute;
             background: #1a2133;
-            min-width: 220px;
+            min-width: max-content;
             border-radius: 12px;
-            padding: 12px;
+            padding: 8px 12px;
             top: 40px;
             left: 0;
             z-index: 100;
-            flex-wrap: wrap;
-            gap: 8px;
             border: 1px solid #4a6fa5;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            white-space: nowrap;
         }
         .shape-menu.show {
             display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            gap: 6px;
+            overflow-x: auto;
         }
         .shape-menu button {
             background: #2a3348;
             border: none;
             color: #e2e8f0;
-            padding: 6px 14px;
+            padding: 5px 12px;
             border-radius: 20px;
             cursor: pointer;
             font-size: 0.7rem;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .shape-menu button:hover {
+            background: #4a6fa5;
         }
 
         .search-overlay {
@@ -516,7 +526,7 @@
             <input type="range" id="penWidthSlider" min="2" max="30" value="4">
         </div>
         
-        <!-- Board Color Options - HORIZONTAL LINE (Fixed) -->
+        <!-- Board Color Options - Horizontal Line -->
         <div class="tool-group">
             <span style="color:#94a3b8; font-size:0.7rem;">Board:</span>
             <div class="board-color-row" id="boardColorRow">
@@ -631,7 +641,18 @@
         };
         const shapeList=['rectangle','circle','line','arrow','star','triangle','diamond','heart','square','oval'];
         const shapeMenu=document.getElementById('shapeMenuContainer');
-        shapeList.forEach(shape=>{const btn=document.createElement('button'); btn.innerText=shape.charAt(0).toUpperCase()+shape.slice(1); btn.onclick=()=>{currentShape=shape; document.getElementById('shapesBtn').innerText=shape.charAt(0).toUpperCase()+shape.slice(1)+' ▼'; setTool('shape'); document.getElementById('shapeMenuContainer').classList.remove('show');}; shapeMenu.appendChild(btn);});
+        // Build shapes menu horizontally
+        shapeList.forEach(shape=>{
+            const btn=document.createElement('button'); 
+            btn.innerText=shape.charAt(0).toUpperCase()+shape.slice(1); 
+            btn.onclick=()=>{
+                currentShape=shape; 
+                document.getElementById('shapesBtn').innerText=shape.charAt(0).toUpperCase()+shape.slice(1)+' ▼'; 
+                setTool('shape'); 
+                document.getElementById('shapeMenuContainer').classList.remove('show');
+            }; 
+            shapeMenu.appendChild(btn);
+        });
         
         function startDrawing(e){ if(currentTool==='pan') return; drawing=true; const pos=getCanvasCoords(e); startX=pos.x; startY=pos.y; lastX=pos.x; lastY=pos.y; if(currentTool==='text'){ placeTextAt(startX,startY); drawing=false; return;} if(currentTool==='erase'){ ctx.save(); ctx.globalCompositeOperation='destination-out'; ctx.beginPath(); ctx.arc(startX,startY,currentWidth,0,Math.PI*2); ctx.fill(); ctx.restore(); saveToHistory(); drawing=false; return;} if(currentTool==='shape') shapeStart={x:startX,y:startY};}
         function drawMove(e){ if(!drawing) return; const pos=getCanvasCoords(e); if(currentTool==='pen'){ ctx.beginPath(); ctx.moveTo(lastX,lastY); ctx.lineTo(pos.x,pos.y); ctx.strokeStyle=currentColor; ctx.lineWidth=currentWidth; ctx.stroke(); lastX=pos.x; lastY=pos.y; saveToHistory(); } else if(currentTool==='highlighter'){ ctx.beginPath(); ctx.moveTo(lastX,lastY); ctx.lineTo(pos.x,pos.y); ctx.strokeStyle=currentColor; ctx.lineWidth=currentWidth*1.4; ctx.globalAlpha=0.35; ctx.stroke(); ctx.globalAlpha=1; lastX=pos.x; lastY=pos.y; saveToHistory(); }}
@@ -640,15 +661,17 @@
         function setTool(tool){ currentTool=tool; canvas.style.cursor=(tool==='text')?'text':'crosshair'; document.querySelectorAll('.tool-btn').forEach(btn=>btn.classList.remove('active')); if(tool==='pen') document.getElementById('drawPenBtn').classList.add('active'); if(tool==='highlighter') document.getElementById('highlighterBtn').classList.add('active'); if(tool==='erase') document.getElementById('eraseBtn').classList.add('active'); if(tool==='text') document.getElementById('textToolBtn').classList.add('active'); if(tool==='pan') document.getElementById('panModeBtn').classList.add('active'); ctx.globalAlpha=1; }
         document.getElementById('undoBtn').onclick=undo; document.getElementById('drawPenBtn').onclick=()=>setTool('pen'); document.getElementById('highlighterBtn').onclick=()=>setTool('highlighter'); document.getElementById('eraseBtn').onclick=()=>setTool('erase'); document.getElementById('textToolBtn').onclick=()=>setTool('text'); document.getElementById('panModeBtn').onclick=()=>setTool('pan'); document.getElementById('penColorPicker').onchange=e=>currentColor=e.target.value; document.getElementById('penWidthSlider').oninput=e=>currentWidth=parseInt(e.target.value); document.getElementById('clearCanvasBtn').onclick=clearFullBoard;
         
-        // Board Color Options - Horizontal (Fixed)
+        // Board Color Options
         document.querySelectorAll('.board-color-option').forEach(opt=>opt.addEventListener('click',()=>setBoardColor(opt.getAttribute('data-color'))));
         
+        // Shapes menu toggle with horizontal layout
         document.getElementById('shapesBtn').addEventListener('click',(e)=>{e.stopPropagation(); document.getElementById('shapeMenuContainer').classList.toggle('show');});
         document.addEventListener('click',(e)=>{if(!document.getElementById('shapeDropdown').contains(e.target)) document.getElementById('shapeMenuContainer').classList.remove('show');});
+        
         let isPanning=false, panStartPos={x:0,y:0}; container.addEventListener('mousedown',(e)=>{if(currentTool==='pan'){isPanning=true; panStartPos.x=e.clientX-panX; panStartPos.y=e.clientY-panY; container.style.cursor='grabbing';}}); window.addEventListener('mousemove',(e)=>{if(isPanning && currentTool==='pan'){panX=e.clientX-panStartPos.x; panY=e.clientY-panStartPos.y; updateTransform();}}); window.addEventListener('mouseup',()=>{isPanning=false; container.style.cursor='grab';});
         document.getElementById('zoomInBtn').onclick=()=>{scale=Math.min(scale+0.1,3); updateTransform();}; document.getElementById('zoomOutBtn').onclick=()=>{scale=Math.max(scale-0.1,0.3); updateTransform();}; document.getElementById('resetViewBtn').onclick=()=>{scale=1; panX=0; panY=0; updateTransform();};
         
-        // Google Slides Fullscreen
+        // Google Slides
         document.getElementById('loadGoogleSlidesBtn').onclick=()=>{ let url=document.getElementById('googleSlidesUrl').value.trim(); if(!url){ alert("Paste Google Slides embed URL"); return; } if(url.includes('/d/') && !url.includes('embed')){ const match=url.match(/\/d\/([a-zA-Z0-9_-]+)/); if(match) url=`https://docs.google.com/presentation/d/${match[1]}/embed`; } document.getElementById('slidesPreviewContainer').innerHTML=`<iframe src="${url}" allowfullscreen></iframe>`; };
         
         // PDF Annotation System

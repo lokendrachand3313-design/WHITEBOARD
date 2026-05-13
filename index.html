@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Ultimate Teaching Studio | Google Slides + 15 Shapes + Highlighter</title>
+    <title>Teaching Whiteboard | Clean Design</title>
     <style>
         * {
             margin: 0;
@@ -15,117 +15,123 @@
             height: 100vh;
             width: 100vw;
             overflow: hidden;
-            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
-            background: #0f172a;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #1a1e2c;
         }
 
+        /* Main app container */
         .app {
             display: flex;
             flex-direction: column;
             height: 100vh;
             width: 100vw;
-            background: #1e293b;
+            background: #1e2436;
         }
 
-        /* Top toolbar - more compact */
+        /* Top toolbar - minimal, no icons */
         .toolbar {
-            background: #0f172a;
+            background: #141a2a;
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            gap: 4px;
-            padding: 5px 10px;
-            border-bottom: 2px solid #f4a261;
+            gap: 6px;
+            padding: 8px 16px;
+            border-bottom: 1px solid #2d3548;
             z-index: 30;
             overflow-x: auto;
-            min-height: 55px;
         }
 
         .tool-group {
             display: inline-flex;
             gap: 4px;
-            background: #1e293b;
-            padding: 3px 8px;
-            border-radius: 40px;
+            background: #1a2133;
+            padding: 4px 10px;
+            border-radius: 8px;
             margin: 0 2px;
         }
 
         .tool-btn {
-            background: #334155;
+            background: #2a3348;
             border: none;
-            color: white;
-            padding: 4px 10px;
-            border-radius: 32px;
+            color: #e2e8f0;
+            padding: 6px 14px;
+            border-radius: 6px;
             cursor: pointer;
-            font-weight: bold;
-            font-size: 0.7rem;
-            transition: 0.1s;
+            font-weight: 500;
+            font-size: 0.75rem;
+            transition: all 0.15s ease;
+            font-family: inherit;
         }
 
         .tool-btn.active {
-            background: #f4a261;
-            color: #0f172a;
+            background: #4a6fa5;
+            color: white;
         }
 
         .tool-btn:hover {
-            background: #475569;
+            background: #3a4562;
         }
 
         .color-picker {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            border: 2px solid white;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 1px solid #4a5568;
             cursor: pointer;
+            background: #e34234;
         }
 
         .board-color-option {
             width: 28px;
             height: 28px;
-            border-radius: 50%;
+            border-radius: 6px;
             cursor: pointer;
-            border: 2px solid white;
+            border: 1px solid #4a5568;
             transition: 0.1s;
         }
 
         .board-color-option:hover {
-            transform: scale(1.1);
+            transform: scale(0.95);
         }
 
         input[type="range"] {
-            width: 70px;
+            width: 80px;
+            background: #2a3348;
+            height: 3px;
+            border-radius: 3px;
         }
 
         /* Tab bar */
         .tab-bar {
             display: flex;
-            gap: 4px;
-            background: #0f172a;
-            padding: 5px 20px;
-            border-bottom: 1px solid #334155;
+            gap: 2px;
+            background: #141a2a;
+            padding: 6px 20px;
+            border-bottom: 1px solid #2d3548;
         }
 
         .tab {
-            background: #1e293b;
-            padding: 5px 20px;
-            border-radius: 30px;
-            color: #cbd5e1;
+            background: #1a2133;
+            padding: 6px 24px;
+            border-radius: 6px 6px 0 0;
+            color: #94a3b8;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 500;
             font-size: 0.85rem;
+            transition: 0.1s;
         }
 
         .tab.active {
-            background: #f4a261;
-            color: #0f172a;
+            background: #2d3548;
+            color: #f0f4fa;
         }
 
-        /* Main area - full height */
+        /* Main content area */
         .main-area {
             flex: 1;
             position: relative;
             overflow: hidden;
-            min-height: 0;
+            background: #0f121c;
         }
 
         .panel {
@@ -135,7 +141,7 @@
             width: 100%;
             height: 100%;
             display: none;
-            background: #0f172a;
+            background: #0f121c;
         }
 
         .panel.active {
@@ -143,10 +149,10 @@
             flex-direction: column;
         }
 
-        /* Infinite Whiteboard */
+        /* Whiteboard container */
         #whiteboardContainer {
             overflow: auto;
-            background: #94a3b8;
+            background: #8c99ac;
             cursor: grab;
             position: relative;
             flex: 1;
@@ -174,16 +180,16 @@
             cursor: crosshair;
         }
 
-        /* Google Slides Panel - Full view */
+        /* Google Slides Panel */
         #slidesPanel {
-            padding: 15px;
+            padding: 20px;
             overflow-y: auto;
         }
 
         .google-slides-container {
-            background: #1e293b;
-            border-radius: 20px;
-            padding: 15px;
+            background: #1a2133;
+            border-radius: 12px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             height: 100%;
@@ -191,144 +197,156 @@
 
         .embed-input-area {
             display: flex;
-            gap: 10px;
-            margin: 10px 0;
+            gap: 12px;
+            margin: 15px 0;
             flex-wrap: wrap;
         }
 
         #googleSlidesUrl {
             flex: 1;
             padding: 10px 16px;
-            border-radius: 40px;
-            border: none;
-            background: #334155;
-            color: white;
+            border-radius: 8px;
+            border: 1px solid #2d3548;
+            background: #0f121c;
+            color: #e2e8f0;
             outline: none;
             font-size: 0.85rem;
+            font-family: inherit;
         }
 
         .slides-preview {
             flex: 1;
             margin-top: 15px;
-            border-radius: 16px;
+            border-radius: 12px;
             overflow: hidden;
-            background: #0f172a;
-            min-height: 500px;
+            background: #0a0d16;
+            min-height: 450px;
             position: relative;
         }
 
         iframe {
             width: 100%;
             height: 100%;
-            min-height: 550px;
+            min-height: 500px;
             border: none;
-            border-radius: 16px;
+            border-radius: 8px;
         }
 
         /* Images Panel */
         #imagesPanel {
-            padding: 15px;
+            padding: 20px;
             overflow-y: auto;
         }
 
         .image-grid {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 12px;
+            gap: 16px;
+            margin-top: 16px;
         }
 
         .image-card {
-            background: #1e293b;
-            border-radius: 16px;
-            padding: 6px;
-            width: 120px;
+            background: #1a2133;
+            border-radius: 12px;
+            padding: 8px;
+            width: 130px;
             cursor: pointer;
             text-align: center;
+            border: 1px solid #2d3548;
+            transition: 0.1s;
+        }
+
+        .image-card:hover {
+            background: #2a3348;
         }
 
         .image-card img {
             width: 100%;
             height: 90px;
             object-fit: cover;
-            border-radius: 12px;
+            border-radius: 8px;
         }
 
-        /* Google Search Overlay */
+        /* Search Overlay */
         .search-overlay {
             position: fixed;
-            bottom: 15px;
-            right: 15px;
+            bottom: 20px;
+            right: 20px;
             z-index: 1000;
-            background: #0f172aee;
-            backdrop-filter: blur(12px);
-            border-radius: 48px;
+            background: #1a2133e6;
+            backdrop-filter: blur(8px);
+            border-radius: 40px;
             padding: 8px 16px;
-            border: 1px solid #f4a261;
+            border: 1px solid #4a6fa5;
         }
 
         .search-input-area {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             align-items: center;
         }
 
         #googleSearchInput {
-            padding: 6px 12px;
-            border-radius: 32px;
-            border: none;
-            width: 200px;
+            padding: 8px 14px;
+            border-radius: 40px;
+            border: 1px solid #2d3548;
+            background: #0f121c;
+            color: #e2e8f0;
+            width: 210px;
             outline: none;
             font-size: 0.8rem;
+            font-family: inherit;
         }
 
         .search-results-popup {
             position: fixed;
-            bottom: 80px;
-            right: 15px;
-            width: 360px;
-            max-height: 400px;
-            background: #1e293b;
-            border-radius: 20px;
-            padding: 10px;
+            bottom: 85px;
+            right: 20px;
+            width: 380px;
+            max-height: 420px;
+            background: #1a2133;
+            border-radius: 16px;
+            padding: 12px;
             overflow-y: auto;
-            box-shadow: 0 10px 25px black;
-            border: 1px solid #f4a261;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            border: 1px solid #4a6fa5;
             z-index: 1001;
         }
 
         .search-result-item {
             display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-            background: #334155;
-            border-radius: 14px;
-            padding: 6px;
+            gap: 12px;
+            margin-bottom: 12px;
+            background: #2a3348;
+            border-radius: 12px;
+            padding: 8px;
             cursor: pointer;
         }
 
         .search-result-item img {
-            width: 55px;
-            height: 55px;
+            width: 60px;
+            height: 60px;
             object-fit: cover;
-            border-radius: 10px;
+            border-radius: 8px;
         }
 
         .result-buttons {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             margin-left: auto;
             align-items: center;
         }
 
         .small-action {
-            background: #f4a261;
+            background: #4a6fa5;
             border: none;
-            padding: 3px 8px;
+            padding: 4px 12px;
             border-radius: 20px;
             cursor: pointer;
-            font-size: 0.65rem;
-            font-weight: bold;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: white;
+            font-family: inherit;
         }
 
         .shape-dropdown {
@@ -339,27 +357,28 @@
         .shape-menu {
             display: none;
             position: absolute;
-            background: #1e293b;
-            min-width: 180px;
-            border-radius: 16px;
-            padding: 8px;
-            top: 35px;
+            background: #1a2133;
+            min-width: 200px;
+            border-radius: 12px;
+            padding: 10px;
+            top: 38px;
             left: 0;
             z-index: 50;
             flex-wrap: wrap;
-            gap: 5px;
-            border: 1px solid #f4a261;
+            gap: 6px;
+            border: 1px solid #4a6fa5;
         }
 
         .shape-menu button {
-            background: #334155;
+            background: #2a3348;
             border: none;
-            color: white;
-            padding: 5px 10px;
+            color: #e2e8f0;
+            padding: 5px 12px;
             border-radius: 20px;
             cursor: pointer;
             font-size: 0.7rem;
             margin: 2px;
+            font-family: inherit;
         }
 
         .shape-dropdown:hover .shape-menu {
@@ -367,15 +386,32 @@
         }
 
         .zoom-control {
-            background: #0f172a;
-            border-radius: 32px;
+            background: #1a2133;
+            border-radius: 8px;
             padding: 2px 6px;
         }
 
         .bg-color-palette {
             display: flex;
-            gap: 5px;
-            margin-left: 5px;
+            gap: 6px;
+            margin-left: 6px;
+        }
+
+        /* Headings */
+        h3 {
+            font-weight: 500;
+            font-size: 1rem;
+            color: #cbd5e6;
+            margin-bottom: 8px;
+        }
+
+        .info-text {
+            color: #7e8aa8;
+            font-size: 0.75rem;
+        }
+
+        button, .tool-btn, .tab {
+            user-select: none;
         }
     </style>
 </head>
@@ -383,102 +419,159 @@
 <div class="app">
     <div class="toolbar">
         <div class="tool-group">
-            <button id="drawPenBtn" class="tool-btn active">✏️ Pen</button>
-            <button id="highlighterBtn" class="tool-btn">🟡 Highlighter</button>
-            <button id="eraseBtn" class="tool-btn">🧽 Eraser</button>
-            <button id="textToolBtn" class="tool-btn">📝 Text</button>
+            <button id="undoBtn" class="tool-btn">Undo</button>
+            <button id="drawPenBtn" class="tool-btn active">Pen</button>
+            <button id="highlighterBtn" class="tool-btn">Highlighter</button>
+            <button id="eraseBtn" class="tool-btn">Eraser</button>
+            <button id="textToolBtn" class="tool-btn">Text</button>
             <div class="shape-dropdown">
-                <button id="shapesBtn" class="tool-btn">🔷 Shapes ▼</button>
-                <div class="shape-menu" id="shapeMenuContainer">
-                    <!-- 15 shapes will be populated here -->
-                </div>
+                <button id="shapesBtn" class="tool-btn">Shapes ▼</button>
+                <div class="shape-menu" id="shapeMenuContainer"></div>
             </div>
         </div>
         <div class="tool-group">
             <input type="color" id="penColorPicker" class="color-picker" value="#e34234">
             <input type="range" id="penWidthSlider" min="2" max="30" value="4">
+            <span style="color:#94a3b8; font-size:0.7rem; margin-left:4px;">Size</span>
         </div>
         <div class="tool-group">
-            <span style="color:white; font-size:0.7rem;">Board:</span>
+            <span style="color:#94a3b8; font-size:0.7rem;">Board:</span>
             <div class="bg-color-palette" id="boardColorPalette">
-                <div class="board-color-option" style="background:#000000;" data-color="#000000"></div>
+                <div class="board-color-option" style="background:#1a1e2c;" data-color="#1a1e2c"></div>
                 <div class="board-color-option" style="background:#ffffff;" data-color="#ffffff"></div>
-                <div class="board-color-option" style="background:#22c55e;" data-color="#22c55e"></div>
-                <div class="board-color-option" style="background:#3b82f6;" data-color="#3b82f6"></div>
-                <div class="board-color-option" style="background:#ef4444;" data-color="#ef4444"></div>
+                <div class="board-color-option" style="background:#d4e6c3;" data-color="#d4e6c3"></div>
+                <div class="board-color-option" style="background:#b8d4e3;" data-color="#b8d4e3"></div>
+                <div class="board-color-option" style="background:#f0d8d8;" data-color="#f0d8d8"></div>
             </div>
-            <button id="clearCanvasBtn" class="tool-btn">🗑️ Clear</button>
+            <button id="clearCanvasBtn" class="tool-btn">Clear</button>
         </div>
         <div class="tool-group zoom-control">
-            <button id="zoomOutBtn" class="tool-btn">🔍-</button>
-            <span id="zoomLevel" style="color:white;">100%</span>
-            <button id="zoomInBtn" class="tool-btn">🔍+</button>
-            <button id="resetViewBtn" class="tool-btn">⟳ Reset</button>
-            <button id="panModeBtn" class="tool-btn">✋ Pan</button>
+            <button id="zoomOutBtn" class="tool-btn">Zoom Out</button>
+            <span id="zoomLevel" style="color:#e2e8f0; font-size:0.7rem;">100%</span>
+            <button id="zoomInBtn" class="tool-btn">Zoom In</button>
+            <button id="resetViewBtn" class="tool-btn">Reset</button>
+            <button id="panModeBtn" class="tool-btn">Pan</button>
         </div>
     </div>
 
     <div class="tab-bar">
-        <div class="tab active" data-tab="whiteboard">🎨 Whiteboard</div>
-        <div class="tab" data-tab="slides">📽️ Google Slides</div>
-        <div class="tab" data-tab="images">🖼️ My Images</div>
+        <div class="tab active" data-tab="whiteboard">Whiteboard</div>
+        <div class="tab" data-tab="slides">Google Slides</div>
+        <div class="tab" data-tab="images">Image Library</div>
     </div>
 
     <div class="main-area">
         <div id="whiteboardPanel" class="panel active">
-            <div id="whiteboardContainer" style="width:100%; height:100%; overflow:auto; background:#94a3b8;">
+            <div id="whiteboardContainer" style="width:100%; height:100%; overflow:auto; background:#8c99ac;">
                 <div class="infinite-canvas" id="infiniteCanvasWrapper">
                     <canvas id="mainCanvas" width="4000" height="4000"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- Google Slides Panel - Larger View -->
         <div id="slidesPanel" class="panel">
-            <div class="google-slides-container" style="height: 100%; display: flex; flex-direction: column;">
-                <h3 style="color:#f4a261; font-size:1rem;">📽️ Google Slides Integration</h3>
-                <p style="color:#94a3b8; font-size:0.75rem;">Paste embed link from File → Share → Publish to web → Embed</p>
+            <div class="google-slides-container">
+                <h3>Google Slides Embed</h3>
+                <p class="info-text">Paste embed link from File → Share → Publish to web → Embed</p>
                 <div class="embed-input-area">
                     <input type="text" id="googleSlidesUrl" placeholder="https://docs.google.com/presentation/d/.../embed">
-                    <button id="loadGoogleSlidesBtn" class="tool-btn">📥 Load Presentation</button>
+                    <button id="loadGoogleSlidesBtn" class="tool-btn">Load Presentation</button>
                 </div>
-                <div id="slidesPreviewContainer" class="slides-preview" style="flex:1; min-height: 0;">
-                    <div style="color:#94a3b8; padding:40px; text-align:center;">📄 Paste a Google Slides embed link above to view presentation here</div>
+                <div id="slidesPreviewContainer" class="slides-preview">
+                    <div style="color:#7e8aa8; padding:40px; text-align:center;">No slides loaded. Paste a Google Slides embed link above.</div>
                 </div>
             </div>
         </div>
 
         <div id="imagesPanel" class="panel">
-            <h3 style="color:#f4a261;">📸 Saved Images Library</h3>
-            <button id="clearAllImagesBtn" class="tool-btn" style="margin:10px 0;">Clear All Images</button>
+            <h3>Saved Images</h3>
+            <button id="clearAllImagesBtn" class="tool-btn" style="margin:12px 0;">Clear All Images</button>
             <div id="imageLibraryGrid" class="image-grid"></div>
         </div>
     </div>
 
     <div class="search-overlay" id="searchOverlay">
         <div class="search-input-area">
-            <input type="text" id="googleSearchInput" placeholder="🔍 Search images (diagram, map, etc)">
+            <input type="text" id="googleSearchInput" placeholder="Search images (diagram, map, etc)">
             <button id="searchGoogleBtn" class="tool-btn">Search</button>
-            <button id="toggleSearchBtn" style="background:#f4a261; border:none; border-radius:30px; padding:3px 8px;">✖</button>
+            <button id="toggleSearchBtn" style="background:#4a6fa5; border:none; border-radius:30px; padding:3px 10px; color:white;">X</button>
         </div>
     </div>
 </div>
 
 <script>
     (function() {
-        // ========== INFINITE CANVAS ==========
+        // Canvas setup
         const canvas = document.getElementById('mainCanvas');
         const ctx = canvas.getContext('2d');
         canvas.width = 4000;
         canvas.height = 4000;
         
+        // Undo / History
+        let historyStack = [];
+        let currentStateIndex = -1;
+        let isUndoRedoAction = false;
+        
+        function saveToHistory() {
+            if (isUndoRedoAction) return;
+            if (currentStateIndex < historyStack.length - 1) {
+                historyStack = historyStack.slice(0, currentStateIndex + 1);
+            }
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            historyStack.push(imageData);
+            currentStateIndex = historyStack.length - 1;
+            if (historyStack.length > 50) {
+                historyStack.shift();
+                currentStateIndex--;
+            }
+        }
+        
+        function restoreFromHistory(index) {
+            if (index < 0 || index >= historyStack.length) return;
+            isUndoRedoAction = true;
+            ctx.putImageData(historyStack[index], 0, 0);
+            currentStateIndex = index;
+            isUndoRedoAction = false;
+        }
+        
+        function undo() {
+            if (currentStateIndex > 0) {
+                restoreFromHistory(currentStateIndex - 1);
+            }
+        }
+        
+        function clearFullBoard() {
+            const bgColor = localStorage.getItem('boardBgColor') || '#ffffff';
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            saveToHistory();
+        }
+        
+        function setBoardColor(color) {
+            localStorage.setItem('boardBgColor', color);
+            ctx.globalCompositeOperation = 'destination-over';
+            ctx.fillStyle = color;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.globalCompositeOperation = 'source-over';
+            saveToHistory();
+        }
+        
+        function initHistory() {
+            const initialBg = localStorage.getItem('boardBgColor') || '#ffffff';
+            ctx.fillStyle = initialBg;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            saveToHistory();
+        }
+        
+        // Drawing state
         let drawing = false;
         let currentTool = 'pen';
         let currentColor = '#e34234';
         let currentWidth = 4;
         let startX = 0, startY = 0;
         let lastX = 0, lastY = 0;
-        let canvasState = null;
+        let currentShape = 'rectangle';
+        let shapeStart = null;
         
         // Pan & Zoom
         const container = document.getElementById('whiteboardContainer');
@@ -488,32 +581,9 @@
         
         function updateTransform() {
             wrapper.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
-            document.getElementById('zoomLevel').innerText = Math.round(scale * 100) + '%';
+            const zoomPercent = document.getElementById('zoomLevel');
+            if (zoomPercent) zoomPercent.innerText = Math.round(scale * 100) + '%';
         }
-        
-        function saveCanvasState() {
-            canvasState = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        }
-        
-        function clearFullBoard() {
-            const bgColor = localStorage.getItem('boardBgColor') || '#ffffff';
-            ctx.fillStyle = bgColor;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            saveCanvasState();
-        }
-        
-        // Board color selection
-        document.querySelectorAll('.board-color-option').forEach(opt => {
-            opt.addEventListener('click', () => {
-                const color = opt.getAttribute('data-color');
-                localStorage.setItem('boardBgColor', color);
-                ctx.fillStyle = color;
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                saveCanvasState();
-            });
-        });
-        
-        clearFullBoard();
         
         function getCanvasCoords(e) {
             const rect = canvas.getBoundingClientRect();
@@ -534,205 +604,137 @@
             return { x, y };
         }
         
-        // Text placement
         function placeTextAt(x, y) {
-            const text = prompt("✏️ Enter your text:", "Type here...");
+            const text = prompt("Enter your text:", "Type here...");
             if (text && text.trim()) {
-                ctx.font = `bold ${Math.max(16, currentWidth * 2.5)}px "Segoe UI"`;
+                ctx.font = `500 ${Math.max(16, currentWidth * 2.5)}px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto`;
                 ctx.fillStyle = currentColor;
                 ctx.fillText(text, x, y);
-                saveCanvasState();
+                saveToHistory();
             }
             setTool('pen');
         }
         
-        // ========== 15 SHAPE FUNCTIONS ==========
-        function drawRectangle(x, y, w, h) {
-            ctx.strokeStyle = currentColor;
-            ctx.fillStyle = currentColor + '40';
-            ctx.lineWidth = currentWidth;
-            ctx.strokeRect(x, y, w, h);
-            saveCanvasState();
-        }
-        
-        function drawCircle(x, y, radius) {
-            ctx.beginPath();
-            ctx.arc(x, y, radius, 0, Math.PI*2);
-            ctx.strokeStyle = currentColor;
-            ctx.lineWidth = currentWidth;
-            ctx.stroke();
-            saveCanvasState();
-        }
-        
-        function drawLine(x1, y1, x2, y2) {
-            ctx.beginPath();
-            ctx.moveTo(x1, y1);
-            ctx.lineTo(x2, y2);
-            ctx.strokeStyle = currentColor;
-            ctx.lineWidth = currentWidth;
-            ctx.stroke();
-            saveCanvasState();
-        }
-        
-        function drawArrow(fromX, fromY, toX, toY) {
-            const angle = Math.atan2(toY - fromY, toX - fromX);
-            const arrowSize = 20;
-            ctx.beginPath();
-            ctx.moveTo(fromX, fromY);
-            ctx.lineTo(toX, toY);
-            ctx.strokeStyle = currentColor;
-            ctx.lineWidth = currentWidth;
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(toX, toY);
-            ctx.lineTo(toX - arrowSize * Math.cos(angle - Math.PI/6), toY - arrowSize * Math.sin(angle - Math.PI/6));
-            ctx.lineTo(toX - arrowSize * Math.cos(angle + Math.PI/6), toY - arrowSize * Math.sin(angle + Math.PI/6));
-            ctx.fillStyle = currentColor;
-            ctx.fill();
-            saveCanvasState();
-        }
-        
-        function drawStar(cx, cy, outerR, innerR, points) {
-            let rot = Math.PI/2*3;
-            const step = Math.PI / points;
-            ctx.beginPath();
-            for (let i = 0; i < points; i++) {
-                const x1 = cx + Math.cos(rot) * outerR;
-                const y1 = cy + Math.sin(rot) * outerR;
-                ctx.lineTo(x1, y1);
-                rot += step;
-                const x2 = cx + Math.cos(rot) * innerR;
-                const y2 = cy + Math.sin(rot) * innerR;
-                ctx.lineTo(x2, y2);
-                rot += step;
-            }
-            ctx.closePath();
-            ctx.fillStyle = currentColor + '80';
-            ctx.fill();
-            ctx.strokeStyle = currentColor;
-            ctx.lineWidth = currentWidth;
-            ctx.stroke();
-            saveCanvasState();
-        }
-        
-        function drawTriangle(x, y, w, h) {
-            ctx.beginPath();
-            ctx.moveTo(x + w/2, y);
-            ctx.lineTo(x + w, y + h);
-            ctx.lineTo(x, y + h);
-            ctx.closePath();
-            ctx.fillStyle = currentColor + '40';
-            ctx.fill();
-            ctx.strokeStyle = currentColor;
-            ctx.lineWidth = currentWidth;
-            ctx.stroke();
-            saveCanvasState();
-        }
-        
-        function drawDiamond(x, y, w, h) {
-            ctx.beginPath();
-            ctx.moveTo(x + w/2, y);
-            ctx.lineTo(x + w, y + h/2);
-            ctx.lineTo(x + w/2, y + h);
-            ctx.lineTo(x, y + h/2);
-            ctx.closePath();
-            ctx.fillStyle = currentColor + '40';
-            ctx.fill();
-            ctx.stroke();
-            saveCanvasState();
-        }
-        
-        function drawHeart(x, y, size) {
-            ctx.beginPath();
-            ctx.moveTo(x, y + size/4);
-            ctx.bezierCurveTo(x, y, x + size/2, y, x + size/2, y + size/4);
-            ctx.bezierCurveTo(x + size/2, y, x + size, y, x + size, y + size/4);
-            ctx.bezierCurveTo(x + size, y + size/2, x + size/2, y + size*0.75, x + size/2, y + size);
-            ctx.bezierCurveTo(x + size/2, y + size*0.75, x, y + size/2, x, y + size/4);
-            ctx.fillStyle = currentColor + '80';
-            ctx.fill();
-            ctx.stroke();
-            saveCanvasState();
-        }
-        
-        // Shape mapping
+        // Shapes library
         const shapes = {
-            'rectangle': drawRectangle,
-            'circle': drawCircle,
-            'line': drawLine,
-            'arrow': drawArrow,
-            'star': (x, y, w, h) => drawStar(x + w/2, y + h/2, w/2, w/4, 5),
-            'triangle': drawTriangle,
-            'diamond': drawDiamond,
-            'heart': (x, y, w, h) => drawHeart(x, y, Math.min(w, h)),
-            'square': (x, y, w, h) => drawRectangle(x, y, Math.min(w, h), Math.min(w, h)),
-            'oval': (x, y, w, h) => {
-                ctx.beginPath();
-                ctx.ellipse(x + w/2, y + h/2, w/2, h/2, 0, 0, Math.PI*2);
-                ctx.stroke();
-                saveCanvasState();
+            rectangle: (x, y, w, h) => {
+                ctx.strokeStyle = currentColor;
+                ctx.fillStyle = currentColor + '30';
+                ctx.lineWidth = currentWidth;
+                ctx.strokeRect(x, y, w, h);
+                saveToHistory();
             },
-            'pentagon': (x, y, w, h) => {
+            circle: (x, y, w, h) => {
+                const radius = Math.min(Math.abs(w), Math.abs(h)) / 2;
+                const cx = x + w/2, cy = y + h/2;
                 ctx.beginPath();
-                const centerX = x + w/2, centerY = y + h/2, radius = Math.min(w, h)/2;
-                for(let i=0; i<5; i++) {
-                    const angle = -Math.PI/2 + i * 2*Math.PI/5;
-                    const px = centerX + radius * Math.cos(angle);
-                    const py = centerY + radius * Math.sin(angle);
-                    if(i===0) ctx.moveTo(px, py);
-                    else ctx.lineTo(px, py);
+                ctx.arc(cx, cy, radius, 0, Math.PI*2);
+                ctx.strokeStyle = currentColor;
+                ctx.lineWidth = currentWidth;
+                ctx.stroke();
+                saveToHistory();
+            },
+            line: (x, y, w, h) => {
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + w, y + h);
+                ctx.strokeStyle = currentColor;
+                ctx.lineWidth = currentWidth;
+                ctx.stroke();
+                saveToHistory();
+            },
+            arrow: (x, y, w, h) => {
+                const toX = x + w, toY = y + h;
+                const angle = Math.atan2(toY - y, toX - x);
+                const arrowSize = 20;
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(toX, toY);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(toX, toY);
+                ctx.lineTo(toX - arrowSize * Math.cos(angle - Math.PI/6), toY - arrowSize * Math.sin(angle - Math.PI/6));
+                ctx.lineTo(toX - arrowSize * Math.cos(angle + Math.PI/6), toY - arrowSize * Math.sin(angle + Math.PI/6));
+                ctx.fillStyle = currentColor;
+                ctx.fill();
+                saveToHistory();
+            },
+            star: (x, y, w, h) => {
+                const cx = x + w/2, cy = y + h/2, outerR = Math.min(w, h)/2, innerR = outerR/2;
+                let rot = Math.PI/2*3;
+                const step = Math.PI / 5;
+                ctx.beginPath();
+                for (let i = 0; i < 5; i++) {
+                    ctx.lineTo(cx + Math.cos(rot) * outerR, cy + Math.sin(rot) * outerR);
+                    rot += step;
+                    ctx.lineTo(cx + Math.cos(rot) * innerR, cy + Math.sin(rot) * innerR);
+                    rot += step;
                 }
                 ctx.closePath();
+                ctx.fillStyle = currentColor + '80';
+                ctx.fill();
                 ctx.stroke();
-                saveCanvasState();
+                saveToHistory();
             },
-            'hexagon': (x, y, w, h) => {
-                ctx.beginPath();
-                const centerX = x + w/2, centerY = y + h/2, radius = Math.min(w, h)/2;
-                for(let i=0; i<6; i++) {
-                    const angle = i * 2*Math.PI/6;
-                    const px = centerX + radius * Math.cos(angle);
-                    const py = centerY + radius * Math.sin(angle);
-                    if(i===0) ctx.moveTo(px, py);
-                    else ctx.lineTo(px, py);
-                }
-                ctx.closePath();
-                ctx.stroke();
-                saveCanvasState();
-            },
-            'cloud': (x, y, w, h) => {
-                ctx.beginPath();
-                ctx.arc(x + w*0.2, y + h*0.5, w*0.25, 0, Math.PI*2);
-                ctx.arc(x + w*0.5, y + h*0.3, w*0.3, 0, Math.PI*2);
-                ctx.arc(x + w*0.8, y + h*0.5, w*0.25, 0, Math.PI*2);
-                ctx.arc(x + w*0.5, y + h*0.7, w*0.2, 0, Math.PI*2);
-                ctx.stroke();
-                saveCanvasState();
-            },
-            'cross': (x, y, w, h) => {
+            triangle: (x, y, w, h) => {
                 ctx.beginPath();
                 ctx.moveTo(x + w/2, y);
-                ctx.lineTo(x + w/2, y + h);
-                ctx.moveTo(x, y + h/2);
-                ctx.lineTo(x + w, y + h/2);
+                ctx.lineTo(x + w, y + h);
+                ctx.lineTo(x, y + h);
+                ctx.closePath();
+                ctx.fillStyle = currentColor + '40';
+                ctx.fill();
                 ctx.stroke();
-                saveCanvasState();
+                saveToHistory();
+            },
+            diamond: (x, y, w, h) => {
+                ctx.beginPath();
+                ctx.moveTo(x + w/2, y);
+                ctx.lineTo(x + w, y + h/2);
+                ctx.lineTo(x + w/2, y + h);
+                ctx.lineTo(x, y + h/2);
+                ctx.closePath();
+                ctx.fillStyle = currentColor + '40';
+                ctx.fill();
+                ctx.stroke();
+                saveToHistory();
+            },
+            heart: (x, y, w, h) => {
+                const size = Math.min(w, h);
+                const cx = x + w/2 - size/2;
+                const cy = y + h/2 - size/2;
+                ctx.beginPath();
+                ctx.moveTo(cx + size/2, cy + size/4);
+                ctx.bezierCurveTo(cx + size/2, cy, cx + size, cy, cx + size, cy + size/4);
+                ctx.bezierCurveTo(cx + size, cy + size/2, cx + size/2, cy + size*0.75, cx + size/2, cy + size);
+                ctx.bezierCurveTo(cx + size/2, cy + size*0.75, cx, cy + size/2, cx, cy + size/4);
+                ctx.bezierCurveTo(cx, cy, cx + size/2, cy, cx + size/2, cy + size/4);
+                ctx.fillStyle = currentColor + '80';
+                ctx.fill();
+                ctx.stroke();
+                saveToHistory();
+            },
+            square: (x, y, w, h) => {
+                const side = Math.min(w, h);
+                ctx.strokeRect(x, y, side, side);
+                saveToHistory();
+            },
+            oval: (x, y, w, h) => {
+                ctx.beginPath();
+                ctx.ellipse(x + w/2, y + h/2, Math.abs(w)/2, Math.abs(h)/2, 0, 0, Math.PI*2);
+                ctx.stroke();
+                saveToHistory();
             }
         };
         
-        let currentShape = 'rectangle';
-        let shapeStart = null;
-        
-        // Build 15 shapes menu
-        const shapeNames = ['rectangle', 'circle', 'line', 'arrow', 'star', 'triangle', 'diamond', 'heart', 'square', 'oval', 'pentagon', 'hexagon', 'cloud', 'cross'];
-        const shapeIcons = { rectangle:'⬜', circle:'⚪', line:'📏', arrow:'➡️', star:'⭐', triangle:'🔺', diamond:'🔷', heart:'❤️', square:'⬛', oval:'⚫', pentagon:'⬟', hexagon:'⬡', cloud:'☁️', cross:'✚' };
+        const shapeList = ['rectangle', 'circle', 'line', 'arrow', 'star', 'triangle', 'diamond', 'heart', 'square', 'oval'];
         const shapeMenu = document.getElementById('shapeMenuContainer');
-        shapeNames.forEach(shape => {
+        shapeList.forEach(shape => {
             const btn = document.createElement('button');
-            btn.innerHTML = `${shapeIcons[shape] || '📐'} ${shape.charAt(0).toUpperCase()+shape.slice(1)}`;
+            btn.innerText = shape.charAt(0).toUpperCase() + shape.slice(1);
             btn.onclick = () => {
                 currentShape = shape;
-                document.getElementById('shapesBtn').innerHTML = `${shapeIcons[shape] || '🔷'} ${shape.charAt(0).toUpperCase()+shape.slice(1)} ▼`;
+                document.getElementById('shapesBtn').innerText = shape.charAt(0).toUpperCase() + shape.slice(1) + ' ▼';
                 setTool('shape');
             };
             shapeMenu.appendChild(btn);
@@ -745,7 +747,6 @@
             const pos = getCanvasCoords(e);
             startX = pos.x; startY = pos.y;
             lastX = pos.x; lastY = pos.y;
-            
             if (currentTool === 'text') {
                 placeTextAt(startX, startY);
                 drawing = false;
@@ -758,20 +759,17 @@
                 ctx.arc(startX, startY, currentWidth, 0, Math.PI*2);
                 ctx.fill();
                 ctx.restore();
-                saveCanvasState();
+                saveToHistory();
                 drawing = false;
                 return;
             }
-            if (currentTool === 'shape') {
-                shapeStart = { x: startX, y: startY };
-            }
+            if (currentTool === 'shape') shapeStart = { x: startX, y: startY };
         }
         
         function drawMove(e) {
             if (!drawing) return;
             const pos = getCanvasCoords(e);
             const currX = pos.x, currY = pos.y;
-            
             if (currentTool === 'pen') {
                 ctx.beginPath();
                 ctx.moveTo(lastX, lastY);
@@ -780,35 +778,27 @@
                 ctx.lineWidth = currentWidth;
                 ctx.stroke();
                 lastX = currX; lastY = currY;
-                saveCanvasState();
-            }
-            else if (currentTool === 'highlighter') {
+                saveToHistory();
+            } else if (currentTool === 'highlighter') {
                 ctx.beginPath();
                 ctx.moveTo(lastX, lastY);
                 ctx.lineTo(currX, currY);
                 ctx.strokeStyle = currentColor;
-                ctx.lineWidth = currentWidth * 1.5;
-                ctx.globalAlpha = 0.4;
+                ctx.lineWidth = currentWidth * 1.4;
+                ctx.globalAlpha = 0.35;
                 ctx.stroke();
                 ctx.globalAlpha = 1;
                 lastX = currX; lastY = currY;
-                saveCanvasState();
+                saveToHistory();
             }
         }
         
         function endDrawing(e) {
             if (!drawing) return;
             const pos = getCanvasCoords(e);
-            const endX = pos.x, endY = pos.y;
-            const w = endX - startX, h = endY - startY;
-            
-            if (currentTool === 'shape' && shapeStart) {
-                ctx.strokeStyle = currentColor;
-                ctx.fillStyle = currentColor + '30';
-                ctx.lineWidth = currentWidth;
-                const shapeFn = shapes[currentShape];
-                if(shapeFn) shapeFn(startX, startY, Math.abs(w), Math.abs(h));
-                saveCanvasState();
+            const w = pos.x - startX, h = pos.y - startY;
+            if (currentTool === 'shape' && shapeStart && shapes[currentShape]) {
+                shapes[currentShape](startX, startY, w, h);
             }
             drawing = false;
             shapeStart = null;
@@ -821,7 +811,6 @@
         canvas.addEventListener('touchmove', (e) => { e.preventDefault(); drawMove(e); });
         canvas.addEventListener('touchend', endDrawing);
         
-        // Tool management
         function setTool(tool) {
             currentTool = tool;
             canvas.style.cursor = (tool === 'text') ? 'text' : 'crosshair';
@@ -834,6 +823,8 @@
             ctx.globalAlpha = 1;
         }
         
+        // UI Bindings
+        document.getElementById('undoBtn').onclick = () => undo();
         document.getElementById('drawPenBtn').onclick = () => setTool('pen');
         document.getElementById('highlighterBtn').onclick = () => setTool('highlighter');
         document.getElementById('eraseBtn').onclick = () => setTool('erase');
@@ -841,7 +832,11 @@
         document.getElementById('panModeBtn').onclick = () => setTool('pan');
         document.getElementById('penColorPicker').onchange = (e) => currentColor = e.target.value;
         document.getElementById('penWidthSlider').oninput = (e) => currentWidth = parseInt(e.target.value);
-        document.getElementById('clearCanvasBtn').onclick = () => clearFullBoard();
+        document.getElementById('clearCanvasBtn').onclick = () => { clearFullBoard(); };
+        
+        document.querySelectorAll('.board-color-option').forEach(opt => {
+            opt.addEventListener('click', () => setBoardColor(opt.getAttribute('data-color')));
+        });
         
         // Pan & Zoom
         let isPanning = false;
@@ -867,19 +862,19 @@
         document.getElementById('zoomOutBtn').onclick = () => { scale = Math.max(scale - 0.1, 0.3); updateTransform(); };
         document.getElementById('resetViewBtn').onclick = () => { scale = 1; panX = 0; panY = 0; updateTransform(); };
         
-        // Google Slides Integration
+        // Google Slides
         const slidesPreview = document.getElementById('slidesPreviewContainer');
         document.getElementById('loadGoogleSlidesBtn').onclick = () => {
             let url = document.getElementById('googleSlidesUrl').value.trim();
-            if (!url) { alert("Please paste Google Slides embed URL"); return; }
+            if (!url) { alert("Please paste a Google Slides embed URL"); return; }
             if (url.includes('/d/') && !url.includes('embed')) {
                 const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
                 if (match) url = `https://docs.google.com/presentation/d/${match[1]}/embed`;
             }
-            slidesPreview.innerHTML = `<iframe src="${url}" allowfullscreen style="width:100%; height:100%; min-height:550px;"></iframe>`;
+            slidesPreview.innerHTML = `<iframe src="${url}" allowfullscreen style="width:100%; height:100%; min-height:500px;"></iframe>`;
         };
         
-        // Google Image Search
+        // Image Search
         const searchBtn = document.getElementById('searchGoogleBtn');
         const searchInput = document.getElementById('googleSearchInput');
         let resultsPopup = null;
@@ -889,14 +884,13 @@
             if (resultsPopup) resultsPopup.remove();
             resultsPopup = document.createElement('div');
             resultsPopup.className = 'search-results-popup';
-            resultsPopup.innerHTML = '<div style="color:#ffd966;">🔎 Searching images...</div>';
+            resultsPopup.innerHTML = '<div style="color:#cbd5e6;">Searching images...</div>';
             document.body.appendChild(resultsPopup);
-            
             const imageUrls = [];
-            for(let i=0;i<12;i++) {
+            for(let i=0;i<10;i++) {
                 imageUrls.push(`https://source.unsplash.com/featured/300x200?${encodeURIComponent(query)}&sig=${Date.now()}+${i}`);
             }
-            resultsPopup.innerHTML = '<div style="color:#ffd966;">✨ Click image → Choose action ✨</div>';
+            resultsPopup.innerHTML = '<div style="color:#cbd5e6; margin-bottom:8px;">Click an image:</div>';
             for(let url of imageUrls) {
                 const resultDiv = document.createElement('div');
                 resultDiv.className = 'search-result-item';
@@ -905,12 +899,11 @@
                 const btnDiv = document.createElement('div');
                 btnDiv.className = 'result-buttons';
                 const showBtn = document.createElement('button');
-                showBtn.innerText = '📌 Board';
+                showBtn.innerText = 'Board';
                 showBtn.className = 'small-action';
                 const saveBtn = document.createElement('button');
-                saveBtn.innerText = '💾 Save';
+                saveBtn.innerText = 'Save';
                 saveBtn.className = 'small-action';
-                
                 showBtn.onclick = () => {
                     const fullImg = new Image();
                     fullImg.onload = () => {
@@ -922,7 +915,7 @@
                         if(ratio > canvas.width/canvas.height) { w = canvas.width; h = w/ratio; }
                         else { h = canvas.height; w = h*ratio; }
                         ctx.drawImage(fullImg, (canvas.width-w)/2, (canvas.height-h)/2, w, h);
-                        saveCanvasState();
+                        saveToHistory();
                         document.querySelector('.tab[data-tab="whiteboard"]').click();
                         if(resultsPopup) resultsPopup.remove();
                     };
@@ -938,7 +931,7 @@
                         tempCanvas.getContext('2d').drawImage(saveImg,0,0);
                         userImages.push({ id: Date.now(), dataURL: tempCanvas.toDataURL() });
                         renderImageLibrary();
-                        alert("✅ Saved to My Images!");
+                        alert("Image saved to library");
                         if(resultsPopup) resultsPopup.remove();
                     };
                     saveImg.src = url;
@@ -955,11 +948,11 @@
         searchInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') searchGoogleImages(searchInput.value); });
         document.getElementById('toggleSearchBtn').onclick = () => { if(resultsPopup) resultsPopup.remove(); };
         
-        // Images Library
+        // Image Library
         let userImages = [];
         const imageGrid = document.getElementById('imageLibraryGrid');
         function renderImageLibrary() {
-            if(userImages.length === 0) { imageGrid.innerHTML = '<div style="color:#aaa;">No saved images. Search & save images.</div>'; return; }
+            if(userImages.length === 0) { imageGrid.innerHTML = '<div style="color:#7e8aa8;">No saved images. Use search to find and save images.</div>'; return; }
             imageGrid.innerHTML = '';
             userImages.forEach(img => {
                 const card = document.createElement('div');
@@ -978,7 +971,7 @@
                         if(ratio > canvas.width/canvas.height) { w = canvas.width; h = w/ratio; }
                         else { h = canvas.height; w = h*ratio; }
                         ctx.drawImage(big, (canvas.width-w)/2, (canvas.height-h)/2, w, h);
-                        saveCanvasState();
+                        saveToHistory();
                         document.querySelector('.tab[data-tab="whiteboard"]').click();
                     };
                     big.src = img.dataURL;
@@ -986,6 +979,7 @@
                 imageGrid.appendChild(card);
             });
         }
+        
         document.getElementById('clearAllImagesBtn').onclick = () => { userImages = []; renderImageLibrary(); };
         
         // Tab switching
@@ -998,6 +992,7 @@
             };
         });
         
+        initHistory();
         renderImageLibrary();
         setTool('pen');
         updateTransform();

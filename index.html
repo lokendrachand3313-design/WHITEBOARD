@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Teaching Whiteboard | Documents + Slides + Images</title>
+    <title>Teaching Whiteboard | PDF + Images Library</title>
     <style>
         * {
             margin: 0;
@@ -138,7 +138,6 @@
             height: 100%;
             display: none;
             background: #0f121c;
-            overflow-y: auto;
         }
 
         .panel.active {
@@ -176,12 +175,12 @@
             cursor: crosshair;
         }
 
-        /* Library Panel - Unified for PDF, Images, Slides */
+        /* Library Panel - Clean design for PDF and Images */
         .library-container {
             padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 20px;
             height: 100%;
             overflow-y: auto;
         }
@@ -229,7 +228,7 @@
             flex-wrap: wrap;
             gap: 16px;
             margin-top: 12px;
-            max-height: 300px;
+            max-height: 320px;
             overflow-y: auto;
             padding: 8px;
         }
@@ -242,17 +241,18 @@
             cursor: pointer;
             text-align: center;
             border: 1px solid #4a5568;
-            transition: 0.1s;
+            transition: all 0.15s ease;
         }
 
         .library-item:hover {
             background: #3a4562;
             border-color: #4a6fa5;
+            transform: translateY(-2px);
         }
 
         .library-item img {
             width: 100%;
-            height: 90px;
+            height: 100px;
             object-fit: cover;
             border-radius: 8px;
             background: #0f121c;
@@ -260,7 +260,7 @@
 
         .library-item .pdf-icon {
             width: 100%;
-            height: 90px;
+            height: 100px;
             background: #dc2626;
             border-radius: 8px;
             display: flex;
@@ -278,59 +278,137 @@
             word-break: break-all;
         }
 
-        .google-slides-section {
+        /* PDF Viewer Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        .modal-content {
             background: #1a2133;
-            border-radius: 12px;
+            border-radius: 16px;
+            width: 90%;
+            height: 90%;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #4a6fa5;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            border-bottom: 1px solid #2d3548;
+            background: #141a2a;
+            border-radius: 16px 16px 0 0;
+        }
+        .modal-header h4 {
+            color: #cbd5e6;
+            font-weight: 500;
+        }
+        .modal-close {
+            background: #5a3a3a;
+            border: none;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .modal-close:hover {
+            background: #7a4a4a;
+        }
+        .modal-body {
+            flex: 1;
+            overflow: auto;
             padding: 16px;
         }
-
-        .embed-input-area {
-            display: flex;
-            gap: 12px;
-            margin: 12px 0;
-            flex-wrap: wrap;
-        }
-
-        #googleSlidesUrl {
-            flex: 1;
-            padding: 10px 16px;
-            border-radius: 8px;
-            border: 1px solid #2d3548;
-            background: #0f121c;
-            color: #e2e8f0;
-            outline: none;
-            font-size: 0.85rem;
-            font-family: inherit;
-        }
-
-        .slides-preview {
-            margin-top: 15px;
-            border-radius: 12px;
-            overflow: hidden;
-            background: #0a0d16;
-            min-height: 400px;
-            position: relative;
-        }
-
-        .slides-preview iframe {
+        .pdf-embed {
             width: 100%;
-            height: 450px;
+            height: 100%;
+            min-height: 500px;
             border: none;
             border-radius: 8px;
         }
-
-        h3 {
-            font-weight: 500;
-            font-size: 0.9rem;
-            color: #cbd5e6;
-            margin-bottom: 8px;
+        .image-preview {
+            max-width: 100%;
+            max-height: 100%;
+            display: block;
+            margin: 0 auto;
+            border-radius: 8px;
+        }
+        .add-to-board-btn {
+            background: #4a6fa5;
+            border: none;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            margin-top: 12px;
+            align-self: center;
         }
 
-        .info-text {
-            color: #7e8aa8;
+        .shape-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .shape-menu {
+            display: none;
+            position: absolute;
+            background: #1a2133;
+            min-width: 220px;
+            border-radius: 12px;
+            padding: 12px;
+            top: 40px;
+            left: 0;
+            z-index: 100;
+            flex-wrap: wrap;
+            gap: 8px;
+            border: 1px solid #4a6fa5;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .shape-menu.show {
+            display: flex;
+        }
+
+        .shape-menu button {
+            background: #2a3348;
+            border: none;
+            color: #e2e8f0;
+            padding: 6px 14px;
+            border-radius: 20px;
+            cursor: pointer;
             font-size: 0.7rem;
         }
 
+        .shape-menu button:hover {
+            background: #4a6fa5;
+        }
+
+        .zoom-control {
+            background: #1a2133;
+            border-radius: 8px;
+            padding: 2px 6px;
+        }
+
+        .bg-color-palette {
+            display: flex;
+            gap: 6px;
+            margin-left: 6px;
+        }
+        
         .search-overlay {
             position: fixed;
             bottom: 20px;
@@ -408,58 +486,6 @@
             font-size: 0.7rem;
             font-weight: 500;
             color: white;
-            font-family: inherit;
-        }
-
-        .shape-dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .shape-menu {
-            display: none;
-            position: absolute;
-            background: #1a2133;
-            min-width: 220px;
-            border-radius: 12px;
-            padding: 12px;
-            top: 40px;
-            left: 0;
-            z-index: 100;
-            flex-wrap: wrap;
-            gap: 8px;
-            border: 1px solid #4a6fa5;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-        }
-
-        .shape-menu.show {
-            display: flex;
-        }
-
-        .shape-menu button {
-            background: #2a3348;
-            border: none;
-            color: #e2e8f0;
-            padding: 6px 14px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.7rem;
-        }
-
-        .shape-menu button:hover {
-            background: #4a6fa5;
-        }
-
-        .zoom-control {
-            background: #1a2133;
-            border-radius: 8px;
-            padding: 2px 6px;
-        }
-
-        .bg-color-palette {
-            display: flex;
-            gap: 6px;
-            margin-left: 6px;
         }
     </style>
 </head>
@@ -518,9 +544,8 @@
 
         <div id="libraryPanel" class="panel">
             <div class="library-container">
-                <!-- Upload Section for PDF and Images -->
                 <div class="upload-section">
-                    <div class="upload-title">Upload Documents & Images</div>
+                    <div class="upload-title">Upload PDF, JPG or PNG</div>
                     <div class="upload-area">
                         <label class="file-input-wrapper">
                             📄 Add PDF
@@ -533,27 +558,13 @@
                         <button id="clearLibraryBtn" class="tool-btn" style="background:#5a3a3a;">Clear All</button>
                     </div>
                     <div id="libraryItemsGrid" class="items-grid">
-                        <div style="color:#7e8aa8; width:100%; text-align:center;">No files. Add PDF, JPG or PNG files above.</div>
-                    </div>
-                </div>
-
-                <!-- Google Slides Section -->
-                <div class="google-slides-section">
-                    <div class="upload-title">Google Slides Presentation</div>
-                    <p class="info-text">Paste embed link from File → Share → Publish to web → Embed</p>
-                    <div class="embed-input-area">
-                        <input type="text" id="googleSlidesUrl" placeholder="https://docs.google.com/presentation/d/.../embed">
-                        <button id="loadGoogleSlidesBtn" class="tool-btn">Load Slides</button>
-                    </div>
-                    <div id="slidesPreviewContainer" class="slides-preview">
-                        <div style="color:#7e8aa8; padding:40px; text-align:center;">No slides loaded. Paste a Google Slides embed link above.</div>
+                        <div style="color:#7e8aa8; width:100%; text-align:center;">No files. Add PDF, JPG or PNG files above. Click any file to view.</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Search Overlay for Images -->
     <div class="search-overlay" id="searchOverlay">
         <div class="search-input-area">
             <input type="text" id="googleSearchInput" placeholder="Search online images">
@@ -571,7 +582,6 @@
         canvas.width = 4000;
         canvas.height = 4000;
         
-        // History / Undo
         let historyStack = [];
         let currentStateIndex = -1;
         let isUndoRedoAction = false;
@@ -762,7 +772,7 @@
             ctx.globalAlpha = 1;
         }
         
-        // UI Buttons
+        // UI Bindings
         document.getElementById('undoBtn').onclick = undo;
         document.getElementById('drawPenBtn').onclick = () => setTool('pen');
         document.getElementById('highlighterBtn').onclick = () => setTool('highlighter');
@@ -787,13 +797,81 @@
         document.getElementById('zoomOutBtn').onclick = () => { scale = Math.max(scale - 0.1, 0.3); updateTransform(); };
         document.getElementById('resetViewBtn').onclick = () => { scale = 1; panX = 0; panY = 0; updateTransform(); };
         
-        // ========== LIBRARY: PDF + Images ==========
-        let libraryItems = []; // { id, type, dataURL, name }
+        // ========== LIBRARY: PDF + Images with Preview ==========
+        let libraryItems = [];
         const libraryGrid = document.getElementById('libraryItemsGrid');
+        
+        // Modal for viewing files
+        let currentModal = null;
+        
+        function closeModal() {
+            if (currentModal) {
+                currentModal.remove();
+                currentModal = null;
+            }
+        }
+        
+        function showFileViewer(item) {
+            closeModal();
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.onclick = (e) => { if (e.target === modal) closeModal(); };
+            
+            const modalContent = document.createElement('div');
+            modalContent.className = 'modal-content';
+            
+            const header = document.createElement('div');
+            header.className = 'modal-header';
+            header.innerHTML = `<h4>${item.name}</h4><button class="modal-close">Close</button>`;
+            header.querySelector('.modal-close').onclick = closeModal;
+            
+            const body = document.createElement('div');
+            body.className = 'modal-body';
+            
+            if (item.type === 'pdf') {
+                const iframe = document.createElement('iframe');
+                iframe.className = 'pdf-embed';
+                iframe.src = item.dataURL;
+                body.appendChild(iframe);
+            } else {
+                const img = document.createElement('img');
+                img.src = item.dataURL;
+                img.className = 'image-preview';
+                body.appendChild(img);
+                
+                const addBtn = document.createElement('button');
+                addBtn.innerText = 'Add to Whiteboard';
+                addBtn.className = 'add-to-board-btn';
+                addBtn.onclick = () => {
+                    const fullImg = new Image();
+                    fullImg.onload = () => {
+                        const bg = localStorage.getItem('boardBgColor') || '#ffffff';
+                        ctx.fillStyle = bg;
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        let w = canvas.width, h = canvas.height;
+                        const ratio = fullImg.width / fullImg.height;
+                        if (ratio > canvas.width / canvas.height) { w = canvas.width; h = w / ratio; }
+                        else { h = canvas.height; w = h * ratio; }
+                        ctx.drawImage(fullImg, (canvas.width - w) / 2, (canvas.height - h) / 2, w, h);
+                        saveToHistory();
+                        document.querySelector('.tab[data-tab="whiteboard"]').click();
+                        closeModal();
+                    };
+                    fullImg.src = item.dataURL;
+                };
+                body.appendChild(addBtn);
+            }
+            
+            modalContent.appendChild(header);
+            modalContent.appendChild(body);
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+            currentModal = modal;
+        }
         
         function renderLibrary() {
             if (libraryItems.length === 0) {
-                libraryGrid.innerHTML = '<div style="color:#7e8aa8; width:100%; text-align:center;">No files. Add PDF, JPG or PNG files above.</div>';
+                libraryGrid.innerHTML = '<div style="color:#7e8aa8; width:100%; text-align:center;">No files. Add PDF, JPG or PNG files above. Click any file to view.</div>';
                 return;
             }
             libraryGrid.innerHTML = '';
@@ -814,28 +892,7 @@
                 nameSpan.className = 'item-name';
                 nameSpan.innerText = item.name.length > 25 ? item.name.slice(0,22)+'...' : item.name;
                 card.appendChild(nameSpan);
-                
-                card.onclick = () => {
-                    if (item.type === 'image') {
-                        const img = new Image();
-                        img.onload = () => {
-                            const bg = localStorage.getItem('boardBgColor') || '#ffffff';
-                            ctx.fillStyle = bg;
-                            ctx.fillRect(0, 0, canvas.width, canvas.height);
-                            let w = canvas.width, h = canvas.height;
-                            const ratio = img.width / img.height;
-                            if (ratio > canvas.width / canvas.height) { w = canvas.width; h = w / ratio; }
-                            else { h = canvas.height; w = h * ratio; }
-                            ctx.drawImage(img, (canvas.width - w) / 2, (canvas.height - h) / 2, w, h);
-                            saveToHistory();
-                            document.querySelector('.tab[data-tab="whiteboard"]').click();
-                        };
-                        img.src = item.dataURL;
-                    } else if (item.type === 'pdf') {
-                        // Open PDF in new tab
-                        window.open(item.dataURL, '_blank');
-                    }
-                };
+                card.onclick = () => showFileViewer(item);
                 libraryGrid.appendChild(card);
             });
         }
@@ -867,18 +924,6 @@
             e.target.value = '';
         });
         document.getElementById('clearLibraryBtn').onclick = () => { libraryItems = []; renderLibrary(); };
-        
-        // Google Slides
-        const slidesPreview = document.getElementById('slidesPreviewContainer');
-        document.getElementById('loadGoogleSlidesBtn').onclick = () => {
-            let url = document.getElementById('googleSlidesUrl').value.trim();
-            if (!url) { alert("Please paste a Google Slides embed URL"); return; }
-            if (url.includes('/d/') && !url.includes('embed')) {
-                const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-                if (match) url = `https://docs.google.com/presentation/d/${match[1]}/embed`;
-            }
-            slidesPreview.innerHTML = `<iframe src="${url}" allowfullscreen></iframe>`;
-        };
         
         // Image Search
         const searchBtn = document.getElementById('searchGoogleBtn');
